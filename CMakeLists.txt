@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.18)
 project(nftgen VERSION 1.0.0)
 
-file(GLOB SOURCE_FILES "src/*.cpp")
+# Set output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
+
+file(GLOB SOURCE_FILES "src/**/*.cpp" "src/**/*.hpp")
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
