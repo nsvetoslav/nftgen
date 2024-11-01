@@ -1,4 +1,9 @@
+#include <iostream>
+#include "src/workflow/generator.hpp"
+
 int main()
 {
-    return -1;
+	nftgen::generator generator("");
+
+	return -1;
 }

@@ -1,0 +1,5 @@
+namespace nftgen {
+	class logger {
+
+	};
+}
