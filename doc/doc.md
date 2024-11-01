@@ -18,3 +18,26 @@
 4. Arms
 5. Legs
 6. Extras 
+
+
+Models - all classes that just contain some data. example: 
+class TraitFolder
+{
+    TraitFolder()
+        : _generationChance(0.0)
+    {
+    }
+
+    virtual ~TraitFolder() = default;
+
+private:
+    std::string _path;
+    std::vector<Trait> _traits;
+    double _generationChance;
+};
+
+
+
+workflow -> all logic 
+corekit - core kit functions/classes etc.
+include -> external header/cpp file dependencies / libs /*that should be a different section in makefile that is compilable*/
