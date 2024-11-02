@@ -1,3 +1,5 @@
+#pragma  once
+
 #include <string>
 #include <vector>
 
@@ -12,6 +14,17 @@ public:
     }
 
     virtual ~Trait() = default;
+
+public:
+    void setGenerationChance(double& generationChance)
+    {
+        _generationChance = generationChance;
+    }
+
+    double getGenerationChance()
+    {
+        return _generationChance;
+    }
 
 private:
     std::string _path;

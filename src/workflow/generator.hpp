@@ -1,6 +1,7 @@
 #include <iostream>
 #include "filemanager.hpp"
 #include "../models/traitfolder.hpp"
+#include "calculator.hpp"
 
 namespace nftgen {
 
@@ -16,33 +17,23 @@ namespace nftgen {
 
 	public:
 		bool generate() {
-			std::string root_path = "../../../../assets";
-			utilities::filemanager fileManager;
 
 			try
 			{
-				if (!fileManager.exists(root_path) && !fileManager.isDirectory(root_path))
+				if (!loadDirectories())
 				{
-					// logger.log(!fileManager.exists(), _traitsDirectory);
+					return false;
+				}
+				
+				if (_traitsDirectories.empty())
+				{
 					return false;
 				}
 
-				// Traversing directories in assets
-				std::vector<std::string> directoryPaths;
-				fileManager.getDirectoryFilePaths(root_path, directoryPaths);
+				// Setting generation chances for the first prioritized traitDirectory
+				setGenerationChacnes(_traitsDirectories.at(0));
 
-				for (const auto& traitDirectory : directoryPaths) {
-					TraitFolder traitFolder(traitDirectory);
 
-					// All the trait files paths in a traitDirectory
-					std::vector<std::string> traits;
-					fileManager.getDirectoryFilePaths(traitDirectory, traits);
-
-					traitFolder.setTraits(traits);
-
-					// mem moving traitFolder in _traitsDirectories
-					_traitsDirectories.push_back(std::move(traitFolder));
-				}
 			}
 			catch (const std::exception& exception)
 			{
@@ -51,6 +42,45 @@ namespace nftgen {
 			}
 
 			return true;
+		}
+
+	private:
+
+		bool loadDirectories()
+		{
+			std::string root_path = _traitsDirectory;
+			utilities::filemanager fileManager;
+
+			if (!fileManager.exists(root_path) && !fileManager.isDirectory(root_path))
+			{
+				// logger.log(!fileManager.exists(), _traitsDirectory);
+				return false;
+			}
+
+			// Traversing directories in assets
+			std::vector<std::string> directoryPaths;
+			fileManager.getDirectoryFilePaths(root_path, directoryPaths);
+
+			for (const auto& traitDirectory : directoryPaths) {
+				TraitFolder traitFolder(traitDirectory);
+
+				// All the trait files paths in a traitDirectory
+				std::vector<std::string> traits;
+				fileManager.getDirectoryFilePaths(traitDirectory, traits);
+
+				traitFolder.setTraits(traits);
+
+				// mem moving traitFolder in _traitsDirectories
+				_traitsDirectories.push_back(std::move(traitFolder));
+			}
+
+			return true;
+		}
+
+		void setGenerationChacnes(TraitFolder& traitFolder)
+		{
+			nftgen::calculator calculator;
+			calculator.setEqualGenerationChances(traitFolder.getTraits());
 		}
 
 	private:

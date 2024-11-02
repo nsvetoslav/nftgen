@@ -3,7 +3,7 @@
 
 int main()
 {
-	nftgen::generator generator("");
+	nftgen::generator generator("../../../../assets");
 	generator.generate();
 
 	return -1;

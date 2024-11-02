@@ -25,6 +25,11 @@ public:
 			_traits.push_back(Trait(traitPath));
     }
 
+    std::vector<Trait>& getTraits()
+    {
+        return _traits;
+    }
+
 private:
     std::string _path;
     std::vector<Trait> _traits;
