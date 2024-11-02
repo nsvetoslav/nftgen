@@ -17,18 +17,6 @@ namespace utilities
 		virtual ~filemanager() = default;
 
 	public:
-		bool exists(const std::string& path) const {
-			return std::filesystem::exists(path);
-		}
-
-		bool isDirectory(const std::string& path) {
-			if (!std::filesystem::is_directory(path)) {
-				return false;
-			}
-
-			return true;
-		}
-
 		void getDirectoryFilePaths(const std::string& path, std::vector<std::string>& files) const
 		{
 			for (const auto& entry : std::filesystem::directory_iterator(path))

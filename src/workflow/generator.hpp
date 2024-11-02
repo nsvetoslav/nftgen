@@ -31,8 +31,7 @@ namespace nftgen {
 				}
 
 				// Setting generation chances for the first prioritized traitDirectory
-				setGenerationChacnes(_traitsDirectories.at(0));
-
+				setGenerationChacnes(_traitsDirectories.front());
 
 			}
 			catch (const std::exception& exception)
@@ -51,7 +50,7 @@ namespace nftgen {
 			std::string root_path = _traitsDirectory;
 			utilities::filemanager fileManager;
 
-			if (!fileManager.exists(root_path) && !fileManager.isDirectory(root_path))
+			if (!std::filesystem::exists(root_path) && !std::filesystem::is_directory(root_path))
 			{
 				// logger.log(!fileManager.exists(), _traitsDirectory);
 				return false;
