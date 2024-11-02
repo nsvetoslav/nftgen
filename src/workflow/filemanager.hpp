@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdexcept>
 #include <fstream>  
-#include "corekit/exceptions.hpp" 
+#include "../../corekit/exceptions.hpp" 
 #include <string>
 
 namespace utilities
@@ -17,6 +17,7 @@ namespace utilities
 		virtual ~filemanager() = default;
 
 	public:
+
 		void getDirectoryFilePaths(const std::string& path, std::vector<std::string>& files) const
 		{
 			for (const auto& entry : std::filesystem::directory_iterator(path))

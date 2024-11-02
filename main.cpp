@@ -36,7 +36,7 @@
 
 int main()
 {
-	nftgen::generator generator("../../../../assets");
+	nftgen::generator generator("assets");
 	generator.generate();
 
 	return -1;

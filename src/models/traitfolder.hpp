@@ -20,18 +20,20 @@ public:
         _path = path;
     }
 
-    void setTraits(std::vector<std::string>& traits) {
-        for (const auto& traitPath : traits)
-			_traits.push_back(Trait(traitPath));
-    }
+    void setTraits(std::vector<std::string>& traits);
 
-    std::vector<Trait>& getTraits()
+    inline std::vector<Trait>& getTraits()
     {
         return _traits;
     }
 
+    inline std::string_view get_path [[nodiscard]]() {
+	return _path;
+    }
+    int id;
+
 private:
     std::string _path;
-    std::vector<Trait> _traits;
-    double _generationChance;
+    std::vector<Trait> _traits{};
+    double _generationChance{};
 };
