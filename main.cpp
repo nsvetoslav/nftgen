@@ -4,6 +4,7 @@
 int main()
 {
 	nftgen::generator generator("");
+	generator.generate();
 
 	return -1;
 }

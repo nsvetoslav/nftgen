@@ -1,63 +1,73 @@
 #include <filesystem>
 #include <iostream>
+#include <vector>
 #include <stdexcept>
-#include "corekit/exceptions.hpp"
+#include <fstream>  
+#include "corekit/exceptions.hpp" 
+#include <string>
 
 namespace utilities
 {
 	class filemanager
 	{
 	public:
-		filemanager(const std::string filename)
-			: _filename(filename)
-		{
-
-		}
+		filemanager() 
+		{}
 
 		virtual ~filemanager() = default;
 
 	public:
-		void throwIfNotExists() 
+		bool exists(const std::string& path) const {
+			return std::filesystem::exists(path);
+		}
+
+		bool isDirectory(const std::string& path) {
+			if (!std::filesystem::is_directory(path)) {
+				return false;
+			}
+
+			return true;
+		}
+
+		void getDirectoryFilePaths(const std::string& path, std::vector<std::string>& files) const
 		{
-			try 
-			{
-				if (!std::filesystem::exists(_filename))
-				{
-					throw core::NotExistingFileException(_filename);
-				}
-			}
-			catch (std::exception ex)
-			{
-				throw ex;
-			}
+			for (const auto& entry : std::filesystem::directory_iterator(path))
+				files.push_back(entry.path().string()); 
 		}
 
 		void openFile()
 		{
-
 		}
 
-		void closeFile() 
+		void closeFile()
 		{
-
 		}
 
-		void createFile()
-		{
+		//void createFile()
+		//{
+		//	std::ofstream file(_filename);
+		//	if (!file) {
+		//		throw std::runtime_error("Could not create file: " + _filename);
+		//	}
+		//}
 
-		}
+		//void saveFile(const std::string& content)
+		//{
+		//	std::ofstream file(_filename);
+		//	if (!file) {
+		//		throw std::runtime_error("Could not open file for saving: " + _filename);
+		//	}
+		//	file << content;
+		//}
 
-		void saveFile() 
-		{
-
-		}
-
-		void deleteFile() 
-		{
-
-		}
-
-	private:
-		std::string _filename;
+		//void deleteFile()
+		//{
+		//	if (std::filesystem::remove(_filename)) {
+		//		std::cout << "File deleted successfully: " << _filename << std::endl;
+		//	}
+		//	else {
+		//		std::cerr << "Failed to delete file: " << _filename << std::endl;
+		//	}
+		//}
 	};
 }

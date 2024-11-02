@@ -4,9 +4,10 @@
 class Trait
 {
 public:
-    Trait()
+    Trait(std::string path)
         : _generationChance(0.0),
-          _isExcluded(false)
+          _isExcluded(false),
+        _path(path)
     {
     }
 
