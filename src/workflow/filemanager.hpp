@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdexcept>
 #include <fstream>  
-#include "corekit/exceptions.hpp" 
+#include "../../corekit/exceptions.hpp" 
 #include <string>
 
 namespace utilities
@@ -22,11 +22,7 @@ namespace utilities
 		}
 
 		bool isDirectory(const std::string& path) {
-			if (!std::filesystem::is_directory(path)) {
-				return false;
-			}
-
-			return true;
+			return std::filesystem::is_directory(path);
 		}
 
 		void getDirectoryFilePaths(const std::string& path, std::vector<std::string>& files) const
