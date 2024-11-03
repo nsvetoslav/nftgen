@@ -64,6 +64,7 @@ bool generator::generate() {
 		baseLayer = convertToRGBA(baseLayer);
 		cv::Mat res(baseLayer.size(), baseLayer.type());
 
+
 		do {	
 			if(i != 0) {
 				auto curr = std::string(first_trait->get_path());
@@ -73,8 +74,12 @@ bool generator::generate() {
 					continue;
 				}
 				frontLayer = convertToRGBA(frontLayer);
+				auto start = std::chrono::high_resolution_clock::now();
 				alphaComposite(baseLayer, frontLayer, res);
-				baseLayer = res.clone(); 
+				auto end = std::chrono::high_resolution_clock::now();
+				std::chrono::duration<double> duration = end - start;
+				std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
+				baseLayer = res.clone();
 			}
 			first_trait = first_trait->get_next_trait();
 			i++;
