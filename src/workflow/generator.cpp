@@ -133,6 +133,8 @@ void generator::alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLay
 	int numPixels = baseLayer.rows * baseLayer.cols;
 	for (int i = 0; i < numPixels; i++) {
 		float alpha_B = frontPtr[i * 4 + 3] / 255.0f;
+		if(alpha_B == 0 && frontPtr[i * 4 + 2] == 0 && frontPtr[i * 4 + 1] == 0)
+			continue;
 
 		for (int c = 0; c < 3; c++) {
 			resPtr[i * 4 + c] = static_cast<uchar>(alpha_B * frontPtr[i * 4 + c] + (1 - alpha_B) * basePtr[i * 4 + c]);
@@ -144,7 +146,7 @@ void generator::alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLay
 std::optional<Trait> generator::generate_first_random_trait [[nodiscard]] () {
 	std::sort(_traitsDirectories.begin(), _traitsDirectories.end(), [](auto& dir1, auto& dir2) {
 		return dir1.get_path() < dir2.get_path();
-		});
+	});
 
 	for (int i = 0; i < _traitsDirectories.size(); i++) {
 		_traitsDirectories[i].setId(i);
