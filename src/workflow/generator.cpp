@@ -70,7 +70,6 @@ bool generator::generate() {
 		cv::Mat res(baseLayer.size(), baseLayer.type());
 
 		// copy later if needed
-		auto start = std::chrono::high_resolution_clock::now();
 
 		do {	
 			if(i != 0) {
@@ -95,10 +94,6 @@ bool generator::generate() {
 		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
 		create_gen_directory(directory);
 		std::string generatedImageName = directory + "/" + std::to_string(Trait::get_unix_time()) + ".png";
-
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> duration = end - start;
-		std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
 
 		cv::imwrite(generatedImageName, res);
 

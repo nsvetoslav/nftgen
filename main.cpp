@@ -7,5 +7,11 @@ int main() {
 
 	nftgen::generator generator(nftgen::settings::getInstance().get_assets_directory());
 
-	return generator.generate();
+	auto start = std::chrono::high_resolution_clock::now();
+	generator.generate();
+	auto end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> duration = end - start;
+	std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
+
+	return 1;
 }
