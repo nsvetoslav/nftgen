@@ -19,7 +19,7 @@ public:
     virtual ~Trait() = default;
 
 public:
-    inline void setGenerationChance [[nodiscard]] (double& generationChance)
+    inline void setGenerationChance (double& generationChance)
     {
         _generationChance = generationChance;
     }
@@ -29,7 +29,7 @@ public:
         return _generationChance;
     }
 
-    inline void setTraitFolderId [[nodiscard]] (int id)
+    inline void setTraitFolderId(int id)
     {
         _traitFolderId = id;
     }

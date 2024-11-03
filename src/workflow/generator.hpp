@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <optional>
-#include <opencv2/opencv.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 
 #include "filemanager.hpp"
 #include "calculator.hpp"

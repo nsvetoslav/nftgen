@@ -3,7 +3,7 @@
 
 int main() {
 	if (!nftgen::settings::getInstance().load())
-		return false;
+		return -1;
 
 	nftgen::generator generator(nftgen::settings::getInstance().get_assets_directory());
 
