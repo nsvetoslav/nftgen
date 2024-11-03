@@ -1,0 +1,34 @@
+#pragma once
+
+#include <iostream>
+#include <optional>
+#include <opencv2/opencv.hpp>
+
+#include "filemanager.hpp"
+#include "calculator.hpp"
+#include "../models/traitfolder.hpp"
+
+namespace nftgen {
+	class generator {
+	public:
+		generator(std::string traitsDirectory) noexcept 
+			: _traitsDirectory(traitsDirectory) { }
+
+		virtual ~generator() = default;
+
+	public:
+		bool generate();
+		static std::vector<TraitFolder> _traitsDirectories;
+
+	private:
+
+		bool loadDirectories [[nodiscard]] ();
+		std::optional<Trait> generate_first_random_trait [[nodiscard]] ();
+		void setGenerationChacnes(TraitFolder& traitFolder);
+		cv::Mat convertToRGBA [[nodiscard]] (const cv::Mat& input);
+		void alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res);
+
+	private:
+		std::string _traitsDirectory;
+	};
+}

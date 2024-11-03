@@ -1,44 +1,11 @@
-#include <string>
-#include <vector>
+﻿#include "src/workflow/generator.hpp"
+#include "src/workflow/settings.hpp"
 
-class Trait
-{
-public:
-    Trait()
-        : _generationChance(0.0),
-          _isExcluded(false)
-    {
-    }
+int main() {
+	if (!nftgen::settings::getInstance().load())
+		return false;
 
-    virtual ~Trait() = default;
+	nftgen::generator generator(nftgen::settings::getInstance().get_assets_directory());
 
-private:
-    std::string _path;
-    double _generationChance;
-    bool _isExcluded;
-};
-
-class TraitFolder
-{
-    TraitFolder()
-        : _generationChance(0.0)
-    {
-    }
-
-    virtual ~TraitFolder() = default;
-
-private:
-    std::string _path;
-    std::vector<Trait> _traits;
-    double _generationChance;
-};
-
-class GenerationInput
-{
-public:
-    GenerationInput() = default;
-    virtual ~GenerationInput() = default;
-
-private:
-    std::vector<TraitFolder> _traitFolders;
-};
+	return generator.generate();
+}
