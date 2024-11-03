@@ -37,14 +37,15 @@ public:
     std::optional<Trait> get_next_trait [[nodiscard]] () const;
 
     static inline size_t get_unix_time [[nodiscard]]() {
-        auto time = std::chrono::system_clock::now();
-    	return time.time_since_epoch().count();
+	auto time = std::chrono::system_clock::now();
+	return time.time_since_epoch().count();
     }
 
     inline std::string_view get_path [[nodiscard]]() {
-    	return _path;
+	return _path;
     }
 
+    int traitFolderId;
 private:
     std::string _path;
     double _generationChance{};
