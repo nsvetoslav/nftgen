@@ -58,36 +58,28 @@ bool generator::generate() {
 			return false;
 		}
 
-		std::vector<std::string> filenames{};
-
 		std::optional<Trait> first_trait = generate_first_random_trait();
 
-		int i{};
-
-		do {
-			filenames.push_back(std::string(first_trait->get_path()));
-
-			first_trait = first_trait->get_next_trait();
-
-			i++;
-		} while (first_trait->get_next_trait().has_value());
-
-		cv::Mat baseLayer = cv::imread(filenames[0], cv::IMREAD_UNCHANGED);
+		int i{};	
+		cv::Mat baseLayer = cv::imread(std::string(first_trait->get_path()), cv::IMREAD_UNCHANGED);
 		baseLayer = convertToRGBA(baseLayer);
-
 		cv::Mat res(baseLayer.size(), baseLayer.type());
 
-		for (size_t i = 1; i < filenames.size(); ++i) {
-			cv::Mat frontLayer = cv::imread(filenames[i], cv::IMREAD_UNCHANGED);
-			if (frontLayer.empty()) {
-				std::cerr << "Error loading front layer image: " << filenames[i] << std::endl;
-				continue;
+		do {	
+			if(i != 0) {
+				auto curr = std::string(first_trait->get_path());
+				cv::Mat frontLayer = cv::imread(curr, cv::IMREAD_UNCHANGED);
+				if (frontLayer.empty()) {
+					std::cerr << "Error loading front layer image: " << curr << std::endl;
+					continue;
+				}
+				frontLayer = convertToRGBA(frontLayer);
+				alphaComposite(baseLayer, frontLayer, res);
+				baseLayer = res.clone(); 
 			}
-
-			frontLayer = convertToRGBA(frontLayer);
-			alphaComposite(baseLayer, frontLayer, res);
-			baseLayer = res.clone(); 
-		}
+			first_trait = first_trait->get_next_trait();
+			i++;
+		} while (first_trait->get_next_trait().has_value());
 
 		// TODO: Some better name XD
 		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
