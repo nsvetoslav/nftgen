@@ -27,6 +27,7 @@ namespace nftgen {
 		void setGenerationChacnes(TraitFolder& traitFolder);
 		cv::Mat convertToRGBA [[nodiscard]] (const cv::Mat& input);
 		void alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res);
+		void create_gen_directory(std::string_view dir) const;
 
 	private:
 		std::string _traitsDirectory;

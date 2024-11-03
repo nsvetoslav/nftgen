@@ -1,5 +1,6 @@
 #include "generator.hpp"
 #include "generator.hpp"
+#include <filesystem>
 #include <format>
 #include "settings.hpp"
 
@@ -36,6 +37,12 @@ bool generator::loadDirectories()
 	}
 
 	return true;
+}
+
+void generator::create_gen_directory(std::string_view dir) const {
+	if(std::filesystem::exists(dir))
+		return;
+	std::filesystem::create_directory(dir);
 }
 
 bool generator::generate() {
@@ -84,6 +91,7 @@ bool generator::generate() {
 
 		// TODO: Some better name XD
 		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
+		create_gen_directory(directory);
 		std::string generatedImageName = directory + "/" + std::to_string(first_trait->get_unix_time()) + ".png";
 		cv::imwrite(generatedImageName, res);
 
