@@ -6,7 +6,6 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include "../../corekit/exceptions.hpp"
 
 namespace utilities {
     class filemanager {

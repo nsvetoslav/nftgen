@@ -21,7 +21,6 @@ find_package(nlohmann_json REQUIRED)
 
 if(MSVC OR WIN32)
     add_compile_options(/ZI)  
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
