@@ -8,7 +8,7 @@ using namespace nftgen;
 
 std::vector<TraitFolder> generator::_traitsDirectories{};
 
-bool generator::loadDirectories()
+bool generator::load_directories()
 {
 	std::string root_path = _traitsDirectory;
 	utilities::filemanager fileManager;
@@ -21,7 +21,7 @@ bool generator::loadDirectories()
 
 	// Traversing directories in assets
 	std::vector<std::string> directoryPaths;
-	fileManager.getDirectoryFilePaths(root_path, directoryPaths);
+	fileManager.get_directory_file_paths(root_path, directoryPaths);
 
 	for (const auto& traitDirectory : directoryPaths) {
 		TraitFolder traitFolder(traitDirectory);
@@ -29,7 +29,7 @@ bool generator::loadDirectories()
 
 		// All the trait files paths in a traitDirectory
 		std::vector<std::string> traits;
-		fileManager.getDirectoryFilePaths(traitDirectory, traits);
+		fileManager.get_directory_file_paths(traitDirectory, traits);
 
 		for (auto& item : traits) {
 			_imagesMap[item] = std::move(cv::imread(item, cv::IMREAD_UNCHANGED));
@@ -45,7 +45,7 @@ bool generator::loadDirectories()
 }
 
 void generator::create_gen_directory(std::string_view dir) const {
-	if(std::filesystem::exists(dir))
+	if (std::filesystem::exists(dir))
 		return;
 	std::filesystem::create_directory(dir);
 }
@@ -53,7 +53,7 @@ void generator::create_gen_directory(std::string_view dir) const {
 bool generator::generate() {
 	try
 	{
-		if (!loadDirectories())
+		if (!load_directories())
 		{
 			return false;
 		}
@@ -64,16 +64,15 @@ bool generator::generate() {
 		}
 		std::optional<Trait> first_trait = generate_first_random_trait();
 
-		int i{};	
+		int i{};
 		cv::Mat baseLayer = _imagesMap[std::string(first_trait->get_path())];
-		baseLayer = convertToRGBA(baseLayer);
+		baseLayer = convert_to_rgba(baseLayer);
 		cv::Mat res(baseLayer.size(), baseLayer.type());
 
-		// copy later if needed
+		auto start = std::chrono::high_resolution_clock::now();
 
-		do {	
-			if(i != 0) {
-
+		do {
+			if (i != 0) {
 				auto curr = std::string(first_trait->get_path());
 
 				cv::Mat frontLayer = _imagesMap[curr];
@@ -81,25 +80,30 @@ bool generator::generate() {
 					std::cerr << "Error loading front layer image: " << curr << std::endl;
 					continue;
 				}
-				frontLayer = convertToRGBA(frontLayer);
-				alphaComposite(baseLayer, frontLayer, res);
+				frontLayer = convert_to_rgba(frontLayer);
+				alpha_composite(baseLayer, frontLayer, res);
 				baseLayer = res.clone();
 			}
 			first_trait = first_trait->get_next_trait();
 			i++;
 
 		} while (first_trait->get_next_trait().has_value());
-	
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
+		std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
+
 		// TODO: Some better name XD
-		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
+		std::string directory = nftgen::settings::get_instance().get_generated_nfts_directory();
 		create_gen_directory(directory);
 		std::string generatedImageName = directory + "/" + std::to_string(Trait::get_unix_time()) + ".png";
 
 		cv::imwrite(generatedImageName, res);
 
 		// Setting generation chances for the first prioritized traitDirectory
-		setGenerationChacnes(_traitsDirectories.front());
-	} catch (const std::exception& exception)
+		set_generation_chances(_traitsDirectories.front());
+	}
+	catch (const std::exception& exception)
 	{
 		// logger.log(exception); 
 		return false;
@@ -108,13 +112,13 @@ bool generator::generate() {
 	return true;
 }
 
-void nftgen::generator::setGenerationChacnes(TraitFolder& traitFolder)
+void nftgen::generator::set_generation_chances(TraitFolder& traitFolder)
 {
 	nftgen::calculator calculator;
-	calculator.setEqualGenerationChances(traitFolder.getTraits());
+	calculator.set_equal_geneartion_chances(traitFolder.getTraits());
 }
 
-cv::Mat generator::convertToRGBA(const cv::Mat& input)
+cv::Mat generator::convert_to_rgba(const cv::Mat& input)
 {
 	cv::Mat output;
 
@@ -130,10 +134,10 @@ cv::Mat generator::convertToRGBA(const cv::Mat& input)
 	return output;
 }
 
-void generator::alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res) {
-	CV_Assert(baseLayer.size() == frontLayer.size()); 
-	CV_Assert(baseLayer.type() == CV_8UC4 && frontLayer.type() == CV_8UC4); 
-	res.create(baseLayer.size(), baseLayer.type()); 
+void generator::alpha_composite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res) {
+	CV_Assert(baseLayer.size() == frontLayer.size());
+	CV_Assert(baseLayer.type() == CV_8UC4 && frontLayer.type() == CV_8UC4);
+	res.create(baseLayer.size(), baseLayer.type());
 
 	const uchar* basePtr = baseLayer.data;
 	const uchar* frontPtr = frontLayer.data;
@@ -142,7 +146,7 @@ void generator::alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLay
 	int numPixels = baseLayer.rows * baseLayer.cols;
 	for (int i = 0; i < numPixels; i++) {
 		float alpha_B = frontPtr[i * 4 + 3] / 255.0f;
-		if(alpha_B == 0 && frontPtr[i * 4 + 2] == 0 && frontPtr[i * 4 + 1] == 0)
+		if (alpha_B == 0 && frontPtr[i * 4 + 2] == 0 && frontPtr[i * 4 + 1] == 0)
 			continue;
 
 		for (int c = 0; c < 3; c++) {
@@ -155,13 +159,13 @@ void generator::alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLay
 std::optional<Trait> generator::generate_first_random_trait [[nodiscard]] () {
 	std::sort(_traitsDirectories.begin(), _traitsDirectories.end(), [](auto& dir1, auto& dir2) {
 		return dir1.get_path() < dir2.get_path();
-	});
+		});
 
 	for (int i = 0; i < _traitsDirectories.size(); i++) {
 		_traitsDirectories[i].setId(i);
 
 		for (auto& trait : _traitsDirectories[i].getTraits()) {
-			trait.setTraitFolderId(i);
+			trait.set_trait_folder_id(i);
 		}
 	}
 

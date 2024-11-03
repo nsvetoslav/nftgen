@@ -8,7 +8,7 @@ namespace nftgen
 	class calculator 
 	{
 	public:
-		static void setEqualGenerationChances(std::vector<Trait>& traits) 
+		static void set_equal_geneartion_chances(std::vector<Trait>& traits) 
 		{
 			size_t count = traits.size();
 			if (count == 0)
@@ -17,7 +17,7 @@ namespace nftgen
 			double chance = 1.0 / count;
 
 			for (auto& trait : traits)
-				trait.setGenerationChance(chance);
+				trait.set_generation_chance(chance);
 		}
 	};
 }

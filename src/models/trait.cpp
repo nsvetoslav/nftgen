@@ -13,7 +13,7 @@ std::optional<Trait> Trait::get_next_trait() const {
 
 	std::vector<double> probs(next_folder.size());
 	for(int i = 0; i < probs.size(); i++) {
-		probs[i] = next_folder[i].getGenerationChance();
+		probs[i] = next_folder[i].get_generation_chance();
 	}
 
 	auto time = std::chrono::system_clock::now();

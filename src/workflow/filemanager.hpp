@@ -20,7 +20,7 @@ namespace utilities
 
 	public:
 
-		void getDirectoryFilePaths(const std::string& path, std::vector<std::string>& files) const
+		void get_directory_file_paths(const std::string& path, std::vector<std::string>& files) const
 		{
 			for (const auto& entry : std::filesystem::directory_iterator(path))
 				files.push_back(entry.path().string()); 

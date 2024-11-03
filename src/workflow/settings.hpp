@@ -13,7 +13,7 @@ public:
 	settings(const settings&) = delete;
 	settings& operator=(const settings&) = delete;
 
-	static settings& getInstance() {
+	static settings& get_instance() {
 		static settings instance;
 		return instance;
 	}

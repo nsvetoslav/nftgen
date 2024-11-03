@@ -27,11 +27,11 @@ namespace nftgen {
 
 	private:
 
-		bool loadDirectories [[nodiscard]] ();
+		bool load_directories [[nodiscard]] ();
 		std::optional<Trait> generate_first_random_trait [[nodiscard]] ();
-		void setGenerationChacnes(TraitFolder& traitFolder);
-		cv::Mat convertToRGBA [[nodiscard]] (const cv::Mat& input);
-		void alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res);
+		void set_generation_chances(TraitFolder& traitFolder);
+		cv::Mat convert_to_rgba [[nodiscard]] (const cv::Mat& input);
+		void alpha_composite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res);
 		void create_gen_directory(std::string_view dir) const;
 
 	private:
