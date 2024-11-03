@@ -57,7 +57,6 @@ bool generator::generate() {
 		{
 			return false;
 		}
-
 		std::optional<Trait> first_trait = generate_first_random_trait();
 
 		int i{};	
@@ -80,17 +79,15 @@ bool generator::generate() {
 			first_trait = first_trait->get_next_trait();
 			i++;
 		} while (first_trait->get_next_trait().has_value());
-
+	
 		// TODO: Some better name XD
 		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
 		create_gen_directory(directory);
-		std::string generatedImageName = directory + "/" + std::to_string(first_trait->get_unix_time()) + ".png";
+		std::string generatedImageName = directory + "/" + std::to_string(Trait::get_unix_time()) + ".png";
 		cv::imwrite(generatedImageName, res);
-
 		// Setting generation chances for the first prioritized traitDirectory
 		setGenerationChacnes(_traitsDirectories.front());
-	}
-	catch (const std::exception& exception)
+	} catch (const std::exception& exception)
 	{
 		// logger.log(exception); 
 		return false;
