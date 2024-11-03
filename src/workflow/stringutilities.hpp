@@ -1,9 +1,6 @@
 #pragma once
 
-namespace utilities
-{
+namespace utilities {
     /// @brief Static string utilitiess class
-    class stringutilities
-    {
-    };
-}
+    class stringutilities {};
+} // namespace utilities

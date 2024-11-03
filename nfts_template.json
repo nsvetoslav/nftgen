@@ -1,0 +1,29 @@
+{
+  "name": "Boilerplate nft collection name",
+  "symbol": "BC",
+  "description": "Boilerplate nft collection name description",
+  "seller_fee_basis_points": 750,
+  "image": "image.png",
+  "external_url": "johndoe.com",
+  "attributes": [
+  ],
+  "collection": {
+    "name": "Boilerpalte collection name",
+    "family": "Let's think about a name of this Generator :)"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "image.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "NO_WALLET",
+        "share": 100
+      }
+    ]
+  }
+}

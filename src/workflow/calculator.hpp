@@ -3,21 +3,16 @@
 #include <vector>
 #include "../models/trait.hpp"
 
-namespace nftgen 
-{
-	class calculator 
-	{
-	public:
-		static void set_equal_geneartion_chances(std::vector<Trait>& traits) 
-		{
-			size_t count = traits.size();
-			if (count == 0)
-				return;
+namespace nftgen {
+    class calculator {
+    public:
+        static void set_equal_geneartion_chances(std::vector<Trait> &traits) {
+            size_t count = traits.size();
+            if (count == 0) return;
 
-			double chance = 1.0 / count;
+            double chance = 1.0 / count;
 
-			for (auto& trait : traits)
-				trait.set_generation_chance(chance);
-		}
-	};
-}
+            for (auto &trait : traits) trait.set_generation_chance(chance);
+        }
+    };
+} // namespace nftgen

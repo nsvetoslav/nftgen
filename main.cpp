@@ -7,7 +7,7 @@ int main() {
 
 	nftgen::generator generator(nftgen::settings::get_instance().get_assets_directory());
 
-	generator.generate();
+	generator.generate(10);
 
 	return 1;
 }

@@ -2,11 +2,10 @@ cmake_minimum_required(VERSION 3.18)
 project(nftgen VERSION 1.0.0)
 
 # Set output directories
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
 
-file(GLOB SOURCE_FILES "src/**/*.cpp" "src/**/*.hpp")
+file(GLOB_RECURSE SOURCE_FILES "src/**/*.cpp" "src/**/*.hpp")
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
@@ -26,6 +25,22 @@ if(MSVC OR WIN32)
 endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
+
+# Custom command to run clang-format
+find_program(CLANG_FORMAT clang-format)
+if(CLANG_FORMAT)
+    message(STATUS "Found clang-format at: ${CLANG_FORMAT}")
+    add_custom_target(format ALL
+        COMMAND ${CMAKE_COMMAND} -E echo "Formatting files..."
+        COMMAND ${CMAKE_COMMAND} -E foreach file IN LISTS SOURCE_FILES
+            COMMAND ${CLANG_FORMAT} -i -style=file ${file}
+            COMMAND ${CMAKE_COMMAND} -E echo "Formatted: ${file}"
+        ENDFOREACH
+        COMMENT "Running clang-format on source files"
+    )
+else()
+    message(WARNING "clang-format not found. Formatting will not be applied.")
+endif()
 
 add_executable(nftgen "main.cpp" ${SOURCE_FILES} "src/workflow/settings.cpp")
 
