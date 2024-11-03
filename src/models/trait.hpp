@@ -29,7 +29,7 @@ public:
         return _generationChance;
     }
 
-    inline void setTraitFolderId [[nodiscard]] (int id)
+    inline void setTraitFolderId (int id)
     {
         _traitFolderId = id;
     }

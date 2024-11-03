@@ -84,7 +84,7 @@ bool generator::generate() {
 
 		// TODO: Some better name XD
 		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
-		std::string generatedImageName = directory + "/" + std::to_string(first_trait->get_unix_time()) + ".png";
+		std::string generatedImageName = directory + "\\" + std::to_string(first_trait->get_unix_time()) + ".png";
 		cv::imwrite(generatedImageName, res);
 
 		// Setting generation chances for the first prioritized traitDirectory
