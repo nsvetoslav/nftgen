@@ -64,25 +64,29 @@ bool generator::generate() {
 		baseLayer = convertToRGBA(baseLayer);
 		cv::Mat res(baseLayer.size(), baseLayer.type());
 
+		// copy later if needed
+		//auto start = std::chrono::high_resolution_clock::now();
+		//auto end = std::chrono::high_resolution_clock::now();
+		//std::chrono::duration<double> duration = end - start;
+		//std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
 
 		do {	
 			if(i != 0) {
+
 				auto curr = std::string(first_trait->get_path());
+
 				cv::Mat frontLayer = cv::imread(curr, cv::IMREAD_UNCHANGED);
 				if (frontLayer.empty()) {
 					std::cerr << "Error loading front layer image: " << curr << std::endl;
 					continue;
 				}
 				frontLayer = convertToRGBA(frontLayer);
-				auto start = std::chrono::high_resolution_clock::now();
 				alphaComposite(baseLayer, frontLayer, res);
-				auto end = std::chrono::high_resolution_clock::now();
-				std::chrono::duration<double> duration = end - start;
-				std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
 				baseLayer = res.clone();
 			}
 			first_trait = first_trait->get_next_trait();
 			i++;
+
 		} while (first_trait->get_next_trait().has_value());
 	
 		// TODO: Some better name XD
