@@ -130,19 +130,22 @@ cv::Mat generator::convertToRGBA(const cv::Mat& input)
 }
 
 void generator::alphaComposite(const cv::Mat& baseLayer, const cv::Mat& frontLayer, cv::Mat& res) {
-	for (int y = 0; y < baseLayer.rows; y++) {
-		for (int x = 0; x < baseLayer.cols; x++) {
-			cv::Vec4b bg_pixel = baseLayer.at<cv::Vec4b>(y, x);
-			cv::Vec4b fg_pixel = frontLayer.at<cv::Vec4b>(y, x);
+	CV_Assert(baseLayer.size() == frontLayer.size()); 
+	CV_Assert(baseLayer.type() == CV_8UC4 && frontLayer.type() == CV_8UC4); 
+	res.create(baseLayer.size(), baseLayer.type()); 
 
-			float alpha_B = fg_pixel[3] / 255.0;
+	const uchar* basePtr = baseLayer.data;
+	const uchar* frontPtr = frontLayer.data;
+	uchar* resPtr = res.data;
 
-			for (int c = 0; c < 3; c++) {
-				res.at<cv::Vec4b>(y, x)[c] =
-					static_cast<uchar>(alpha_B * fg_pixel[c] + (1 - alpha_B) * bg_pixel[c]);
-			}
-			res.at<cv::Vec4b>(y, x)[3] = 255; // Keep output alpha as opaque
+	int numPixels = baseLayer.rows * baseLayer.cols;
+	for (int i = 0; i < numPixels; i++) {
+		float alpha_B = frontPtr[i * 4 + 3] / 255.0f;
+
+		for (int c = 0; c < 3; c++) {
+			resPtr[i * 4 + c] = static_cast<uchar>(alpha_B * frontPtr[i * 4 + c] + (1 - alpha_B) * basePtr[i * 4 + c]);
 		}
+		resPtr[i * 4 + 3] = 255;
 	}
 }
 
