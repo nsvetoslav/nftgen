@@ -26,9 +26,14 @@ bool generator::loadDirectories()
 	for (const auto& traitDirectory : directoryPaths) {
 		TraitFolder traitFolder(traitDirectory);
 
+
 		// All the trait files paths in a traitDirectory
 		std::vector<std::string> traits;
 		fileManager.getDirectoryFilePaths(traitDirectory, traits);
+
+		for (auto& item : traits) {
+			_imagesMap[item] = std::move(cv::imread(item, cv::IMREAD_UNCHANGED));
+		}
 
 		traitFolder.setTraits(traits);
 
@@ -60,22 +65,19 @@ bool generator::generate() {
 		std::optional<Trait> first_trait = generate_first_random_trait();
 
 		int i{};	
-		cv::Mat baseLayer = cv::imread(std::string(first_trait->get_path()), cv::IMREAD_UNCHANGED);
+		cv::Mat baseLayer = _imagesMap[std::string(first_trait->get_path())];
 		baseLayer = convertToRGBA(baseLayer);
 		cv::Mat res(baseLayer.size(), baseLayer.type());
 
 		// copy later if needed
-		//auto start = std::chrono::high_resolution_clock::now();
-		//auto end = std::chrono::high_resolution_clock::now();
-		//std::chrono::duration<double> duration = end - start;
-		//std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
+		auto start = std::chrono::high_resolution_clock::now();
 
 		do {	
 			if(i != 0) {
 
 				auto curr = std::string(first_trait->get_path());
 
-				cv::Mat frontLayer = cv::imread(curr, cv::IMREAD_UNCHANGED);
+				cv::Mat frontLayer = _imagesMap[curr];
 				if (frontLayer.empty()) {
 					std::cerr << "Error loading front layer image: " << curr << std::endl;
 					continue;
@@ -93,7 +95,13 @@ bool generator::generate() {
 		std::string directory = nftgen::settings::getInstance().get_generated_nfts_directory();
 		create_gen_directory(directory);
 		std::string generatedImageName = directory + "/" + std::to_string(Trait::get_unix_time()) + ".png";
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
+		std::cout << "Elapsed time: " << duration.count() << " seconds." << std::endl;
+
 		cv::imwrite(generatedImageName, res);
+
 		// Setting generation chances for the first prioritized traitDirectory
 		setGenerationChacnes(_traitsDirectories.front());
 	} catch (const std::exception& exception)

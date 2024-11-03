@@ -36,5 +36,6 @@ namespace nftgen {
 
 	private:
 		std::string _traitsDirectory;
+		std::map<std::string, cv::Mat> _imagesMap;
 	};
 }
