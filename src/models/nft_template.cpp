@@ -106,4 +106,7 @@ namespace nftgen {
             }
         }
     }
+    void NFT_Metadata::addTrait(const Trait &trait) {
+        _traits.push_back(trait);
+    }
 } // namespace nftgen

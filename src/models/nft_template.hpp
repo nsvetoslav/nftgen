@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
+#include "trait.hpp"
 
 namespace nftgen {
 
@@ -60,6 +61,12 @@ namespace nftgen {
 
         json to_json() const;
         void from_json(const json &j);
+
+        public:
+        void addTrait(const Trait &trait);
+
+    private:
+        std::vector<Trait> _traits;
     };
 
 } // namespace nftgen

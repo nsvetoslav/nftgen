@@ -10,6 +10,20 @@ class Trait {
 public:
     Trait(std::string path) : _generationChance(0.0), _isExcluded(false), _path(path) {}
 
+    Trait(const Trait &other)
+        : _generationChance(other._generationChance), _isExcluded(other._isExcluded), _path(other._path),
+          _traitFolderId(other._traitFolderId) {}
+
+    Trait &operator=(const Trait &other) {
+        if (this != &other) {
+            _generationChance = other._generationChance;
+            _isExcluded = other._isExcluded;
+            _path = other._path;
+            _traitFolderId = other._traitFolderId;
+        }
+        return *this;
+    }
+
     virtual ~Trait() = default;
 
 public:

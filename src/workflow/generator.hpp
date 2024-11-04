@@ -35,8 +35,9 @@ namespace nftgen {
         void                 create_gen_directory(std::string_view dir) const;
 
     private:
-        std::string                    _traitsDirectory;
-        std::map<std::string, cv::Mat> _imagesMap;
-        nftgen::NFT_Metadata           _templateMetadata;
+        std::string                       _traitsDirectory;
+        std::map<std::string, cv::Mat>    _imagesMap;
+        nftgen::NFT_Metadata              _templateMetadata;
+        std::vector<nftgen::NFT_Metadata> _generatedNfts;
     };
 } // namespace nftgen

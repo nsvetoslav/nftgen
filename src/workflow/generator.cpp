@@ -90,28 +90,32 @@ void nftgen::generator::generate_sigle_nft(const int &nftNumber) {
 
     cv::Mat res(baseLayer.size(), baseLayer.type());
 
+    NFT_Metadata nftMetadata;
     do {
-        if (i != 0) {
-            auto curr = std::string(first_trait->get_path());
+        auto curr = std::string(first_trait->get_path());
 
-            cv::Mat frontLayer = _imagesMap[curr];
-            if (frontLayer.empty()) {
-                std::cerr << "Error loading front layer image: " << curr << std::endl;
-                continue;
-            }
-            frontLayer = convert_to_rgba(frontLayer);
-            alpha_composite(baseLayer, frontLayer, res);
-            baseLayer = res.clone();
+        cv::Mat frontLayer = _imagesMap[curr];
+        if (frontLayer.empty()) {
+            std::cerr << "Error loading front layer image: " << curr << std::endl;
+            continue;
         }
+
+        frontLayer = convert_to_rgba(frontLayer);
+        alpha_composite(baseLayer, frontLayer, res);
+        baseLayer = res.clone();
+
         first_trait = first_trait->get_next_trait();
-        i++;
+
+        nftMetadata.addTrait(first_trait.value());
 
     } while (first_trait->get_next_trait().has_value());
 
     std::string directory = nftgen::settings::get_instance().get_generated_nfts_directory();
     create_gen_directory(directory);
-    std::string generatedImageName = directory + "/" + std::to_string(nftNumber) + ".png";
-    cv::imwrite(generatedImageName, res);
+
+    cv::imwrite(directory + "/" + std::to_string(nftNumber) + ".png", res);
+
+    _generatedNfts.push_back(std::move(nftMetadata));
 }
 
 void nftgen::generator::set_generation_chances(TraitFolder &traitFolder) {
