@@ -1,5 +1,5 @@
 #pragma once
 
 namespace nftgen {
-    class logger {};
+	class logger {};
 } // namespace nftgen

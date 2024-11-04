@@ -18,12 +18,14 @@ endif()
 
 find_package(OpenCV REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(Boost REQUIRED COMPONENTS functional) 
 
 if(MSVC OR WIN32)
     add_compile_options(/ZI)  
 endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 
 # Custom command to run clang-format
 find_program(CLANG_FORMAT clang-format)
@@ -44,3 +46,4 @@ endif()
 add_executable(nftgen "main.cpp" ${SOURCE_FILES} "src/workflow/settings.cpp")
 
 target_link_libraries(nftgen ${OpenCV_LIBS})
+target_link_libraries(nftgen ${Boost_LIBRARIES})

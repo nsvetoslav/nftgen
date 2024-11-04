@@ -1,3 +1,3 @@
 namespace nftgen {
-    enum Rarities { Legendary, Epic, Rare, Uncommon, Common };
+	enum Rarities { Legendary, Epic, Rare, Uncommon, Common };
 }

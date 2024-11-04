@@ -8,44 +8,57 @@
 
 class Trait {
 public:
-    Trait(std::string path) : _generationChance(0.0), _isExcluded(false), _path(path) {}
+	Trait(std::string path, std::string file_name, std::string directory_name)
+		: _generationChance(0.0), _isExcluded(false), _path(path), _file_name(file_name),
+		  _directory_name(directory_name) {}
 
-    Trait(const Trait &other)
-        : _generationChance(other._generationChance), _isExcluded(other._isExcluded), _path(other._path),
-          _traitFolderId(other._traitFolderId) {}
+	Trait(const Trait &other)
+		: _generationChance(other._generationChance), _isExcluded(other._isExcluded), _path(other._path),
+		  _traitFolderId(other._traitFolderId), _traitId(other._traitId), _file_name(other._file_name),
+		  _directory_name(other._directory_name) {}
 
-    Trait &operator=(const Trait &other) {
-        if (this != &other) {
-            _generationChance = other._generationChance;
-            _isExcluded = other._isExcluded;
-            _path = other._path;
-            _traitFolderId = other._traitFolderId;
-        }
-        return *this;
-    }
+	Trait &operator=(const Trait &other) {
+		if (this != &other) {
+			_generationChance = other._generationChance;
+			_isExcluded = other._isExcluded;
+			_path = other._path;
+			_traitFolderId = other._traitFolderId;
+			_traitId = other._traitId;
+			_file_name = other._file_name;
+			_directory_name = other._directory_name;
+		}
+		return *this;
+	}
 
-    virtual ~Trait() = default;
+	virtual ~Trait() = default;
 
 public:
-    inline void set_generation_chance(double &generationChance) { _generationChance = generationChance; }
+	inline void set_generation_chance(double &generationChance) { _generationChance = generationChance; }
 
-    inline double get_generation_chance [[nodiscard]] () { return _generationChance; }
+	inline double get_generation_chance [[nodiscard]] () { return _generationChance; }
 
-    inline void set_trait_folder_id(int id) { _traitFolderId = id; }
+	inline void set_trait_folder_id(int id) { _traitFolderId = id; }
 
-    std::optional<Trait> get_next_trait [[nodiscard]] () const;
+	inline void set_trait_id(int traitId) { _traitId = traitId; }
+	const int	get_trait_id [[nodiscard]] () const { return _traitId; }
 
-    static inline size_t get_unix_time [[nodiscard]] () {
-        auto time = std::chrono::system_clock::now();
-        return time.time_since_epoch().count();
-    }
+	std::optional<Trait> get_next_trait [[nodiscard]] () const;
 
-    inline std::string_view get_path [[nodiscard]] () { return _path; }
+	static inline size_t get_unix_time [[nodiscard]] () {
+		auto time = std::chrono::system_clock::now();
+		return time.time_since_epoch().count();
+	}
+
+	inline std::string_view get_path [[nodiscard]] () const { return _path; }
+	inline std::string_view get_filename [[nodiscard]] () const { return _file_name; }
+	inline std::string_view get_directory_name [[nodiscard]] () const { return _directory_name; }
 
 private:
-    int         traitFolderId{};
-    std::string _path;
-    double      _generationChance{};
-    bool        _isExcluded{};
-    int         _traitFolderId{};
+	int			_traitId{};
+	std::string _path;
+	std::string _file_name;
+	std::string _directory_name;
+	double		_generationChance{};
+	bool		_isExcluded{};
+	int			_traitFolderId{};
 };
