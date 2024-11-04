@@ -22,6 +22,7 @@ std::optional<Trait> Trait::get_next_trait() const {
 	Trait nextTrait = next_folder[rand_next];
 
 	nextTrait.set_trait_id(rand_next);
+	nextTrait.set_trait_folder_id(traitDirectory.getId());
 
 	return nextTrait;
 }

@@ -18,7 +18,7 @@ public:
 	void setTraits(std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> traits,
 				   std::string															  direcotry_name);
 
-	inline const int &getId() { return _id; }
+	inline const int &getId() const { return _id; }
 
 	inline void setId(int id) { _id = id; }
 

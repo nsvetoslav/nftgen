@@ -24,9 +24,7 @@ namespace nftgen {
 				trim(result);
 
 				size_t last_dot = result.rfind('.');
-				if (last_dot != std::string::npos) {
-					result.erase(last_dot); 
-				}
+				if (last_dot != std::string::npos) { result.erase(last_dot); }
 
 				return result;
 			}

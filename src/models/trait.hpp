@@ -8,6 +8,8 @@
 
 class Trait {
 public:
+	enum Rarities { Legendary, Epic, Rare, Uncommon, Common };
+
 	Trait(std::string path, std::string file_name, std::string directory_name)
 		: _generationChance(0.0), _isExcluded(false), _path(path), _file_name(file_name),
 		  _directory_name(directory_name) {}
@@ -38,6 +40,7 @@ public:
 	inline double get_generation_chance [[nodiscard]] () { return _generationChance; }
 
 	inline void set_trait_folder_id(int id) { _traitFolderId = id; }
+	inline int	get_trait_folder_id [[nodiscard]] () const { return _traitFolderId; }
 
 	inline void set_trait_id(int traitId) { _traitId = traitId; }
 	const int	get_trait_id [[nodiscard]] () const { return _traitId; }
@@ -48,6 +51,9 @@ public:
 		auto time = std::chrono::system_clock::now();
 		return time.time_since_epoch().count();
 	}
+
+	inline void		set_rarity(const Rarities rarity) { _rarity = rarity; }
+	inline Rarities get_rarity [[nodiscard]] () const { return _rarity; }
 
 	inline std::string_view get_path [[nodiscard]] () const { return _path; }
 	inline std::string_view get_filename [[nodiscard]] () const { return _file_name; }
@@ -61,4 +67,5 @@ private:
 	double		_generationChance{};
 	bool		_isExcluded{};
 	int			_traitFolderId{};
+	Rarities	_rarity{};
 };

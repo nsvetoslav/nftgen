@@ -17,6 +17,7 @@
 
 namespace nftgen {
 	class generator {
+
 	public:
 		generator(std::string traitsDirectory) noexcept : _traitsDirectory(traitsDirectory) {}
 
@@ -42,5 +43,7 @@ namespace nftgen {
 		nftgen::NFT_Metadata			  _templateMetadata;
 		std::vector<nftgen::NFT_Metadata> _generatedNfts;
 		std::unordered_set<size_t>		  _nfts_hashes;
+		std::unordered_map<std::pair<int /*traitFolderID*/, int /*traitID*/>, size_t, boost::hash<std::pair<int, int>>>
+			_nfts_grouped_traits;
 	};
 } // namespace nftgen

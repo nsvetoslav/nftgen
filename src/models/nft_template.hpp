@@ -67,9 +67,11 @@ namespace nftgen {
 
 		// Copy constructor without copying assets
 		NFT_Metadata(const NFT_Metadata &other);
+		const std::vector<Trait> &getTraits() const { return _traits; };
 
 	public:
 		void   addTrait(const Trait &trait);
+
 		size_t generate_traits_hash() const;
 
 	private:

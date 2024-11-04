@@ -59,6 +59,10 @@ bool nftgen::generator::addGeneratedNft(nftgen::NFT_Metadata &nftMetadata) {
 	_nfts_hashes.insert(std::move(traitsHash));
 	_generatedNfts.push_back(std::move(nftMetadata));
 
+	for (const auto &trait : nftMetadata.getTraits()) {
+		_nfts_grouped_traits[std::make_pair(trait.get_trait_folder_id(), trait.get_trait_id())]++;
+	}
+
 	return true;
 }
 
@@ -81,9 +85,30 @@ bool generator::generate(unsigned long nftsCount) {
 		_templateMetadata.from_json(j);
 
 		int generatedNftCount = 0;
-		while (generatedNftCount <= nftsCount) {
+		while (generatedNftCount < nftsCount) {
 			std::cout << "Starting " << generatedNftCount << "th nft generation." << std::endl;
 			generate_single_nft(generatedNftCount);
+		}
+
+		std::vector<std::pair<std::pair<int, int>, size_t>> sorted_traits(_nfts_grouped_traits.begin(),
+																		  _nfts_grouped_traits.end());
+
+		// Step 2: Sort the vector by traitFolderID
+		std::sort(sorted_traits.begin(), sorted_traits.end(), [](const auto &a, const auto &b) {
+			return a.first.first < b.first.first; // Sort by traitFolderID
+		});
+
+		// Output header
+		std::cout << "TraitFolderID | TraitID | Count\n";
+		std::cout << "------------------------------------\n";
+
+		// Step 3: Output the sorted traits
+		for (const auto &entry : sorted_traits) {
+			int	   traitFolderID = entry.first.first; // Folder ID
+			int	   traitID = entry.first.second;	  // Trait ID
+			size_t count = entry.second;			  // Count of times this trait was generated
+
+			std::cout << traitFolderID << "            | " << traitID << "      | " << count << '\n';
 		}
 
 	} catch (const std::exception &exception) {

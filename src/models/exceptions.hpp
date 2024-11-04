@@ -5,5 +5,4 @@ namespace nftgen {
 		HigherGenerationChance = 2,
 		LowerGenerationChance = 3,
 	};
-
 }
