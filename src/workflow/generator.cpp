@@ -27,7 +27,7 @@ bool generator::load_directories() {
 		const auto &traitDirectoryPath = traitDirectory.first;
 		TraitFolder traitFolder(traitDirectoryPath);
 
-		traitFolder.set_directory_name(traitDirectory.second);
+		if (traitDirectory.second == "9. Extras") traitFolder.set_generation_chance(10);
 
 		// All the trait files paths in a traitDirectory
 		std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> traits;
@@ -43,6 +43,8 @@ bool generator::load_directories() {
 		// mem moving traitFolder in _traitsDirectories
 		_traitsDirectories.push_back(std::move(traitFolder));
 	}
+
+	nftgen::calculator::set_equal_geneartion_chances(_traitsDirectories);
 
 	return true;
 }
@@ -132,6 +134,7 @@ void nftgen::generator::generate_single_nft(int &generatedNftCount) {
 
 	// copying data from template without the assets
 	NFT_Metadata nftMetadata(_templateMetadata);
+	int			 traitDirIndex = 0;
 	do {
 		auto curr = std::string(first_trait->get_path());
 
@@ -147,9 +150,11 @@ void nftgen::generator::generate_single_nft(int &generatedNftCount) {
 
 		first_trait = first_trait->get_next_trait();
 
-		nftMetadata.addTrait(first_trait.value());
+		if (first_trait != std::nullopt) nftMetadata.addTrait(first_trait.value());
 
-	} while (first_trait->get_next_trait().has_value());
+		traitDirIndex++;
+
+	} while (traitDirIndex <= _traitsDirectories.size());
 
 	std::string directory = nftgen::settings::get_instance().get_generated_nfts_directory();
 	create_gen_directory(directory);

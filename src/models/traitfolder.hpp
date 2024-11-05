@@ -23,6 +23,8 @@ public:
 	inline void setId(int id) { _id = id; }
 
 	inline std::vector<Trait> &getTraits() { return _traits; }
+	inline const double		   get_generation_chance [[nodiscard]] () const { return _generationChance; }
+	inline void set_generation_chance(double generation_chance) { _generationChance = generation_chance; }
 
 	inline std::string_view get_path [[nodiscard]] () { return _path; }
 

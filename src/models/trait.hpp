@@ -37,7 +37,7 @@ public:
 public:
 	inline void set_generation_chance(double &generationChance) { _generationChance = generationChance; }
 
-	inline double get_generation_chance [[nodiscard]] () { return _generationChance; }
+	inline const double get_generation_chance [[nodiscard]] () const { return _generationChance; }
 
 	inline void set_trait_folder_id(int id) { _traitFolderId = id; }
 	inline int	get_trait_folder_id [[nodiscard]] () const { return _traitFolderId; }

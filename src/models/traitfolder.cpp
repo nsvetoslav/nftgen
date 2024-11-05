@@ -1,5 +1,6 @@
 #include "traitfolder.hpp"
 #include "../workflow/stringutilities.hpp"
+#include "../workflow/calculator.hpp"
 
 void TraitFolder::setTraits(std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> traits,
 							std::string															   direcotry_name) {
@@ -7,5 +8,7 @@ void TraitFolder::setTraits(std::vector<std::pair<std::string /*path*/, std::str
 		_traits.push_back(Trait(traitPath.first,
 								nftgen::utilities::stringutilities::clean_postfix(traitPath.second),
 								nftgen::utilities::stringutilities::clean_prefix(direcotry_name)));
+
 	}
+	nftgen::calculator::set_equal_geneartion_chances(_traits);
 }
