@@ -75,7 +75,7 @@ bool generator::generate(unsigned long nftsCount) {
 		if (_traitsDirectories.empty()) { return false; }
 
 		std::ifstream templateNFTMetadataFile(settings::get_instance().get_working_directory() +
-											  "\\nfts_template.json");
+											  "/nfts_template.json");
 
 		if (!templateNFTMetadataFile.is_open()) {
 			std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
@@ -154,7 +154,7 @@ void nftgen::generator::generate_single_nft(int &generatedNftCount) {
 
 		traitDirIndex++;
 
-	} while (traitDirIndex <= _traitsDirectories.size());
+	} while (traitDirIndex < _traitsDirectories.size() - 1);
 
 	std::string directory = nftgen::settings::get_instance().get_generated_nfts_directory();
 	create_gen_directory(directory);

@@ -19,7 +19,7 @@ namespace nftgen {
 	class generator {
 
 	public:
-		generator(std::string traitsDirectory) noexcept : _traitsDirectory(traitsDirectory) {}
+		generator(std::string traitsDirectory) : _traitsDirectory(traitsDirectory) {}
 
 		virtual ~generator() = default;
 
