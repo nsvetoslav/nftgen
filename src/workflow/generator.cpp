@@ -74,8 +74,7 @@ bool generator::generate(unsigned long nftsCount) {
 
 		if (_traitsDirectories.empty()) { return false; }
 
-		std::ifstream templateNFTMetadataFile(settings::get_instance().get_working_directory() +
-											  "/nfts_template.json");
+		std::ifstream templateNFTMetadataFile(settings::get_instance().get_template_file());
 
 		if (!templateNFTMetadataFile.is_open()) {
 			std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
