@@ -136,11 +136,16 @@ void nftgen::generator::generate_single_nft(int &generatedNftCount) {
 	NFT_Metadata nftMetadata(_templateMetadata);
 	int			 traitDirIndex = 0;
 	do {
-		auto curr = std::string(first_trait->get_path());
+		if (!first_trait.has_value()) {
+			traitDirIndex++;
+			continue;
+		}
 
-		cv::Mat frontLayer = _imagesMap[curr];
+		auto currentImagePath = std::string(first_trait->get_path());
+
+		cv::Mat frontLayer = _imagesMap[currentImagePath];
 		if (frontLayer.empty()) {
-			std::cerr << "Error loading front layer image: " << curr << std::endl;
+			std::cerr << "Error loading front layer image: " << currentImagePath << std::endl;
 			continue;
 		}
 
