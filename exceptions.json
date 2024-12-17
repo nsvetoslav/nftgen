@@ -1,0 +1,45 @@
+{
+  "onGeneratedTraitDirectoriesExceptions": [
+    {
+      "directory": "",
+      "exceptionnedTraitDirectory": "",
+      "exceptionType": ""
+    },
+    {
+      "name": "",
+      "exceptionnedTraitDirectory": "",
+      "exceptionType": ""
+    }
+  ],
+  "onGeneratedTraitsExceptions": [
+    {
+      "trait": "Hood",
+      "exceptionnedTraitDirectory": "Legacy",
+      "exceptionnedTrait": "",
+      "exceptionnedDirectory": "Top Acc",
+      "exceptionType": "NotGenerateWith"
+    },
+    {
+      "trait": "Hood",
+      "exceptionnedTraitDirectory": "Legacy",
+      "exceptionnedTrait": "",
+      "exceptionnedDirectory": "Horns",
+      "exceptionType": "NotGenerateWith"
+    },
+
+    {
+      "trait": "Rainbow Mouth",
+      "exceptionnedTraitDirectory": "Mouth",
+      "exceptionnedTrait": "",
+      "exceptionnedDirectory": "Extras",
+      "exceptionType": "NotGenerateWith"
+    },
+    {
+      "trait": "Rainbow Mouth",
+      "exceptionnedTraitDirectory": "Mouth",
+      "exceptionnedTrait": "",
+      "exceptionnedDirectory": "",
+      "exceptionType": "GenerateLast"
+    }
+  ]
+}

@@ -6,66 +6,71 @@
 #include <string>
 #include <vector>
 
-class Trait {
+#ifdef _WIN32
+#include <opencv2/opencv.hpp>
+#else
+#include <opencv4/opencv2/opencv.hpp>
+#endif
+
+namespace nftgen
+{
+
+enum Rarities
+{
+    Legendary,
+    Epic,
+    Rare,
+    Uncommon,
+    Common
+};
+
+enum GenerationResult
+{
+    SkippedFolder,
+    SuccessfullyGenerated
+};
+
+struct Trait
+{
 public:
-	enum Rarities { Legendary, Epic, Rare, Uncommon, Common };
+    void set_generation_chance(double &generation_chance);
+    const double get_generation_chance [[nodiscard]] () const;
 
-	Trait(std::string path, std::string file_name, std::string directory_name)
-		: _generationChance(0.0), _isExcluded(false), _path(path), _file_name(file_name),
-		  _directory_name(directory_name) {}
+    void set_trait_directory_id(int trait_folder_id);
+    int get_trait_directory_id [[nodiscard]] () const;
 
-	Trait(const Trait &other)
-		: _generationChance(other._generationChance), _isExcluded(other._isExcluded), _path(other._path),
-		  _traitFolderId(other._traitFolderId), _traitId(other._traitId), _file_name(other._file_name),
-		  _directory_name(other._directory_name) {}
+    void set_trait_id(int trait_id);
+    const int get_trait_id [[nodiscard]] () const;
 
-	Trait &operator=(const Trait &other) {
-		if (this != &other) {
-			_generationChance = other._generationChance;
-			_isExcluded = other._isExcluded;
-			_path = other._path;
-			_traitFolderId = other._traitFolderId;
-			_traitId = other._traitId;
-			_file_name = other._file_name;
-			_directory_name = other._directory_name;
-		}
-		return *this;
-	}
+    const cv::Mat &get_matrix [[nodiscard]] () const;
+    void set_matrix(const cv::Mat &matrix);
 
-	virtual ~Trait() = default;
+    void set_rarity(const Rarities rarity);
+    Rarities get_rarity [[nodiscard]] () const;
 
-public:
-	inline void set_generation_chance(double &generationChance) { _generationChance = generationChance; }
+    std::string_view get_path [[nodiscard]] () const;
+    void set_path(const std::string &path);
 
-	inline const double get_generation_chance [[nodiscard]] () const { return _generationChance; }
+    std::string_view get_filename [[nodiscard]] () const;
+    void set_filename(const std::string &filename);
 
-	inline void set_trait_folder_id(int id) { _traitFolderId = id; }
-	inline int	get_trait_folder_id [[nodiscard]] () const { return _traitFolderId; }
+    std::string_view get_directory_name [[nodiscard]] () const;
+    void set_directory_name(const std::string &directory_name);
 
-	inline void set_trait_id(int traitId) { _traitId = traitId; }
-	const int	get_trait_id [[nodiscard]] () const { return _traitId; }
+    static std::pair < std::optional<Trait>, GenerationResult> get_next_trait [[nodiscard]] (int trait_folder_id);
 
-	std::optional<Trait> get_next_trait [[nodiscard]] () const;
-
-	static inline size_t get_unix_time [[nodiscard]] () {
-		auto time = std::chrono::system_clock::now();
-		return time.time_since_epoch().count();
-	}
-
-	inline void		set_rarity(const Rarities rarity) { _rarity = rarity; }
-	inline Rarities get_rarity [[nodiscard]] () const { return _rarity; }
-
-	inline std::string_view get_path [[nodiscard]] () const { return _path; }
-	inline std::string_view get_filename [[nodiscard]] () const { return _file_name; }
-	inline std::string_view get_directory_name [[nodiscard]] () const { return _directory_name; }
+    //bool meets_all_exceptions(const Exceptions& exceptions);
 
 private:
-	int			_traitId{};
-	std::string _path;
-	std::string _file_name;
-	std::string _directory_name;
-	double		_generationChance{};
-	bool		_isExcluded{};
-	int			_traitFolderId{};
-	Rarities	_rarity{};
+    int _trait_id{};
+    std::string _path;
+    std::string _filename;
+    std::string _directory_name;
+    double _generation_chance{};
+    bool _is_excluded{};
+    int _trait_folder_id{};
+    Rarities _rarity{};
+    cv::Mat _image_matrix;
 };
+
+}  // namespace nftgen

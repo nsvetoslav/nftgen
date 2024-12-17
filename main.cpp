@@ -1,12 +1,14 @@
 ﻿#include "src/workflow/generator.hpp"
 #include "src/workflow/settings.hpp"
 
-int main() {
-	if (!nftgen::settings::get_instance().load()) return -1;
+int main()
+{
+    if (!nftgen::settings::get_instance().load())
+        return -1;
 
-	nftgen::generator generator(nftgen::settings::get_instance().get_assets_directory());
+    nftgen::generator generator(nftgen::settings::get_instance().get_assets_directory());
 
-	generator.generate(10);
+    const auto& generation_result = generator.generate(200);
 
-	return 1;
+    return 1;
 }

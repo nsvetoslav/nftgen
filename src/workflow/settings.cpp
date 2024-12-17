@@ -1,36 +1,57 @@
 #include "settings.hpp"
 
-namespace nftgen {
-	std::string settings::_settingsPath = "settings.json";
-	json		settings::_settingsData;
+namespace nftgen
+{
 
-	bool settings::load() {
-		std::ifstream inputFile(_settingsPath);
-		if (!inputFile.is_open()) {
-			std::cerr << "Could not open the settings file: " << _settingsPath << std::endl;
-			return false;
-		}
+std::string settings::_settings_path = "settings.json";
+json settings::_settings_data;
 
-		try {
-			inputFile >> _settingsData;
-		} catch (const json::parse_error &e) {
-			std::cerr << "Parse error: " << e.what() << std::endl;
-			return false;
-		}
+settings &settings::get_instance [[nodiscard]] ()
+{
+    static settings instance;
+    return instance;
+}
 
-		inputFile.close();
-		return true;
-	}
+bool settings::load()
+{
+    std::ifstream inputFile(_settings_path);
+    if (!inputFile.is_open())
+    {
+        std::cerr << "Could not open the settings file: " << _settings_path << std::endl;
+        return false;
+    }
 
-	std::string settings::get_assets_directory() {
-		return _settingsData.value("assets_directory", "");
-	}
+    try
+    {
+        inputFile >> _settings_data;
+    }
+    catch (const json::parse_error &e)
+    {
+        std::cerr << "Parse error: " << e.what() << std::endl;
+        return false;
+    }
 
-	std::string settings::get_working_directory() {
-		return _settingsData.value("working_directory", "");
-	}
+    inputFile.close();
+    return true;
+}
 
-	std::string settings::get_generated_nfts_directory() {
-		return _settingsData.value("generated_nfts_directory", "");
-	}
-} // namespace nftgen
+std::string settings::get_assets_directory [[nodiscard]] ()
+{
+    return _settings_data.value("assets_directory", "");
+}
+
+std::string settings::get_working_directory [[nodiscard]] ()
+{
+    return _settings_data.value("working_directory", "");
+}
+
+std::string settings::get_generated_nfts_directory [[nodiscard]] ()
+{
+    return _settings_data.value("generated_nfts_directory", "");
+}
+
+std::string settings::get_template_file [[nodiscard]] ()
+{
+    return _settings_data.value("nfts_template_directory", "");
+}
+}  // namespace nftgen

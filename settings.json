@@ -1,5 +1,6 @@
 {
   "assets_directory": "D:\\repos\\nftgen\\assets",
   "working_directory": "D:\\repos\\nftgen",
-  "generated_nfts_directory": "D:\\repos\\nftgen\\out\\generated"
+  "generated_nfts_directory": "D:\\repos\\nftgen\\out\\generated",
+  "nfts_template_directory": "D:\\repos\\nftgen\\nfts_template.json"
 }

@@ -6,79 +6,90 @@
 #include <vector>
 #include "trait.hpp"
 
-namespace nftgen {
+namespace nftgen
+{
 
-	using json = nlohmann::ordered_json;
+using json = nlohmann::ordered_json;
 
-	class Attribute {
-	public:
-		std::string trait_type;
-		std::string value;
+class Attribute
+{
+public:
+    json to_json() const;
+    void from_json(const json &j);
 
-		json to_json() const;
-		void from_json(const json &j);
-	};
+public:
+    std::string trait_type;
+    std::string value;
+};
 
-	class File {
-	public:
-		std::string uri;
-		std::string type;
+class File
+{
+public:
+    json to_json() const;
+    void from_json(const json &j);
 
-		json to_json() const;
-		void from_json(const json &j);
-	};
+public:
+    std::string uri;
+    std::string type;
+};
 
-	class Creator {
-	public:
-		std::string address;
-		int			share;
+class Creator
+{
+public:
+    json to_json() const;
+    void from_json(const json &j);
 
-		json to_json() const;
-		void from_json(const json &j);
-	};
+public:
+    std::string address;
+    int share{};
+};
 
-	class Collection {
-	public:
-		std::string name;
-		std::string family;
+class Collection
+{
+public:
+    json to_json() const;
+    void from_json(const json &j);
 
-		json to_json() const;
-		void from_json(const json &j);
-	};
+public:
+    std::string name;
+    std::string family;
+};
 
-	class NFT_Metadata {
-	public:
-		std::string			   name;
-		std::string			   symbol;
-		std::string			   description;
-		int					   seller_fee_basis_points{};
-		std::string			   image;
-		std::string			   external_url;
-		std::vector<Attribute> attributes;
-		Collection			   collection;
-		std::vector<File>	   files;
-		std::string			   category;
-		std::vector<Creator>   creators;
+class NFT_Metadata
+{
+public:
+    NFT_Metadata() = default;
+    NFT_Metadata(const NFT_Metadata &other);
 
-		json to_json() const;
-		void from_json(const json &j);
+public:
+    json to_json() const;
+    void from_json(const json &j);
 
-		NFT_Metadata() = default;
+public:
+    const std::vector<Trait> &get_traits() const;
+    void sort_traits();
+    void add_trait(const Trait &trait);
+    size_t generate_traits_hash() const;
 
-		// Copy constructor without copying assets
-		NFT_Metadata(const NFT_Metadata &other);
-		const std::vector<Trait> &getTraits() const { return _traits; };
+private:
+    void add_attribute_by_trait(const Trait &trait);
 
-	public:
-		void   addTrait(const Trait &trait);
+public:
+    std::string name;
+    std::string symbol;
+    std::string description;
+    int seller_fee_basis_points{};
+    std::string image;
+    std::string external_url;
+    std::vector<Attribute> attributes;
+    Collection collection;
+    std::vector<File> files;
+    std::string category;
+    std::vector<Creator> creators;
 
-		size_t generate_traits_hash() const;
+private:
+    std::vector<Trait> _traits;
+    std::vector<cv::Mat> _images_matrixes;
+};
 
-	private:
-		void addAttribute(const Trait &trait);
-
-	private:
-		std::vector<Trait> _traits;
-	};
-
-} // namespace nftgen
+}  // namespace nftgen

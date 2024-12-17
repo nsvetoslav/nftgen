@@ -8,236 +8,357 @@
 
 using namespace nftgen;
 
-std::vector<TraitFolder> generator::_traitsDirectories{};
+std::vector<TraitDirectory> generator::_traits_directories{};
 
-bool generator::load_directories() {
-	std::string			   root_path = _traitsDirectory;
-	utilities::filemanager fileManager;
+bool generator::load_directories [[nodiscard]] ()
+{
+    std::string root_path = _traits_directories_root_path;
+    utilities::filemanager fileManager;
 
-	if (!std::filesystem::exists(root_path) && !std::filesystem::is_directory(root_path)) {
-		// logger.log(!fileManager.exists(), _traitsDirectory);
-		return false;
-	}
+    if (!std::filesystem::exists(root_path) && !std::filesystem::is_directory(root_path))
+    {
+        // logger.log(!fileManager.exists(), _traitsDirectory);
+        return false;
+    }
 
-	// Traversing directories in assets
-	std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> directoryPaths;
-	fileManager.get_directory_files(root_path, directoryPaths);
+    // Traversing directories in assets
+    std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> trait_directory_paths_pairs;
+    fileManager.get_file_paths_in_directory(root_path, trait_directory_paths_pairs);
 
-	for (const auto &traitDirectory : directoryPaths) {
-		const auto &traitDirectoryPath = traitDirectory.first;
-		TraitFolder traitFolder(traitDirectoryPath);
+    for (int trait_directory_path_index = 0; trait_directory_path_index < trait_directory_paths_pairs.size(); ++trait_directory_path_index)
+    {
+        auto &trait_directory_path_pair = trait_directory_paths_pairs[trait_directory_path_index];
+        const auto &trait_directory_path = trait_directory_path_pair.first;
+        const auto &trait_directory_folder_name = trait_directory_path_pair.second;
 
-		if (traitDirectory.second == "9. Extras") traitFolder.set_generation_chance(10);
+        // set traitFoldersExceptions
+        //
 
-		// All the trait files paths in a traitDirectory
-		std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> traits;
-		fileManager.get_directory_files(traitDirectory.first, traits);
+        TraitDirectory trait_directory;
+        trait_directory.set_path(trait_directory_path);
+        trait_directory.set_directory_name(trait_directory_folder_name);
 
-		for (auto &item : traits) {
-			const auto &traitPath = item.first;
-			_imagesMap[traitPath] = std::move(cv::imread(traitPath, cv::IMREAD_UNCHANGED));
-		}
+        if (trait_directory_folder_name == "6. Earings")
+        {
+            trait_directory.set_generation_chance(0.1);
+        }
+        if (trait_directory_folder_name == "9. Extras")
+        {
+            trait_directory.set_generation_chance(0.08);
+        }
+        if (trait_directory_folder_name == "Legacy")
+        {
+            trait_directory.set_generation_chance(0.03);
+        }
 
-		traitFolder.setTraits(traits, traitDirectory.second);
+        // All the trait files paths in a traitDirectory
+        std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> traits_paths;
+        fileManager.get_file_paths_in_directory(trait_directory_path_pair.first, traits_paths);
 
-		// mem moving traitFolder in _traitsDirectories
-		_traitsDirectories.push_back(std::move(traitFolder));
-	}
+        // loadTraitsExceptions
+        //
+        trait_directory.set_traits(traits_paths, trait_directory_folder_name, trait_directory_path_index);
 
-	nftgen::calculator::set_equal_geneartion_chances(_traitsDirectories);
+        // mem moving traitFolder in _traitsDirectories
+        _traits_directories.push_back(std::move(trait_directory));
+    }
 
-	return true;
+    nftgen::calculator::set_full_generation_chances(_traits_directories);
+
+    std::sort(_traits_directories.begin(), _traits_directories.end(), [](TraitDirectory &dir1, TraitDirectory &dir2) {
+        if (dir1.get_generation_chance() != dir2.get_generation_chance())
+        {
+            return dir1.get_generation_chance() < dir2.get_generation_chance();
+        }
+        return dir1.get_traits().size() > dir2.get_traits().size();
+    });
+
+    return true;
 }
 
-void generator::create_gen_directory(std::string_view dir) const {
-	if (std::filesystem::exists(dir)) return;
-	std::filesystem::create_directory(dir);
+void generator::create_gen_directory(std::string_view dir) const
+{
+    if (std::filesystem::exists(dir))
+        return;
+
+    std::filesystem::create_directory(dir);
 }
 
-bool nftgen::generator::addGeneratedNft(nftgen::NFT_Metadata &nftMetadata) {
-	size_t traitsHash = nftMetadata.generate_traits_hash();
-	if (_nfts_hashes.find(traitsHash) != _nfts_hashes.end()) { return false; }
+bool nftgen::generator::add_generated_nft [[nodiscard]] (nftgen::NFT_Metadata &nft_metadata)
+{
+    size_t traits_hash = nft_metadata.generate_traits_hash();
+    if (_nfts_hashes.find(traits_hash) != _nfts_hashes.end())
+    {
+        return false;
+    }
 
-	_nfts_hashes.insert(std::move(traitsHash));
-	_generatedNfts.push_back(std::move(nftMetadata));
+    _nfts_hashes.insert(std::move(traits_hash));
+    _generated_nfts_metadatas.push_back(std::move(nft_metadata));
 
-	for (const auto &trait : nftMetadata.getTraits()) {
-		_nfts_grouped_traits[std::make_pair(trait.get_trait_folder_id(), trait.get_trait_id())]++;
-	}
+    for (const auto &trait : nft_metadata.get_traits())
+    {
+        _nfts_grouped_traits[std::make_pair(trait.get_trait_directory_id(), trait.get_trait_id())]++;
+    }
 
-	return true;
+    return true;
 }
 
-bool generator::generate(unsigned long nftsCount) {
-	try {
-		if (!load_directories()) { return false; }
-
-		if (_traitsDirectories.empty()) { return false; }
-
-		std::ifstream templateNFTMetadataFile(settings::get_instance().get_template_file());
-
-		if (!templateNFTMetadataFile.is_open()) {
-			std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
-			return false;
-		}
-
-		json j;
-		templateNFTMetadataFile >> j;
-		_templateMetadata.from_json(j);
-
-		int generatedNftCount = 0;
-		while (generatedNftCount < nftsCount) {
-			std::cout << "Starting " << generatedNftCount << "th nft generation." << std::endl;
-			generate_single_nft(generatedNftCount);
-		}
-
-		std::vector<std::pair<std::pair<int, int>, size_t>> sorted_traits(_nfts_grouped_traits.begin(),
-																		  _nfts_grouped_traits.end());
-
-		// Step 2: Sort the vector by traitFolderID
-		std::sort(sorted_traits.begin(), sorted_traits.end(), [](const auto &a, const auto &b) {
-			return a.first.first < b.first.first; // Sort by traitFolderID
-		});
-
-		// Output header
-		std::cout << "TraitFolderID | TraitID | Count\n";
-		std::cout << "------------------------------------\n";
-
-		// Step 3: Output the sorted traits
-		for (const auto &entry : sorted_traits) {
-			int	   traitFolderID = entry.first.first; // Folder ID
-			int	   traitID = entry.first.second;	  // Trait ID
-			size_t count = entry.second;			  // Count of times this trait was generated
-
-			std::cout << traitFolderID << "            | " << traitID << "      | " << count << '\n';
-		}
-
-	} catch (const std::exception &exception) {
-		// logger.log(exception);
-		return false;
-	}
-
-	return true;
+nftgen::generator::generator(std::string trait_directories_root_path) : _traits_directories_root_path(trait_directories_root_path)
+{
+    _generated_nfts_directory = nftgen::settings::get_instance().get_generated_nfts_directory();
+    create_gen_directory(_generated_nfts_directory);
 }
 
-void nftgen::generator::generate_single_nft(int &generatedNftCount) {
-	std::optional<Trait> first_trait = generate_first_random_trait();
+bool generator::generate [[nodiscard]] (unsigned long nfts_count)
+{
+    try
+    {
+        json j;
+        std::ifstream nft_metadata_template_file(settings::get_instance().get_template_file());
+        nft_metadata_template_file >> j;
+        _nft_template_metadata.from_json(j);
 
-	int i{};
+        if (!nft_metadata_template_file.is_open())
+        {
+            std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
+            return false;
+        }
 
-	cv::Mat baseLayer = _imagesMap[std::string(first_trait->get_path())];
+        json exceptions_json;
+        std::string exceptions_file_path = settings::get_instance().get_working_directory() + "\\exceptions.json";
+        std::ifstream nft_exceptions_json_file(exceptions_file_path);
+        if (!nft_exceptions_json_file.is_open())
+        {
+            std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
+            return false;
+        }
 
-	baseLayer = convert_to_rgba(baseLayer);
+        nft_exceptions_json_file >> exceptions_json;
+        this->_exceptions.from_json(exceptions_json);
 
-	cv::Mat res(baseLayer.size(), baseLayer.type());
+        if (!load_directories())
+        {
+            return false;
+        }
 
-	// copying data from template without the assets
-	NFT_Metadata nftMetadata(_templateMetadata);
-	int			 traitDirIndex = 0;
-	do {
-		if (!first_trait.has_value()) {
-			traitDirIndex++;
-			continue;
-		}
+        if (_traits_directories.empty())
+        {
+            return false;
+        }
 
-		auto currentImagePath = std::string(first_trait->get_path());
+        int generated_nfts_count = 0;
+        while (generated_nfts_count < nfts_count)
+        {
+            std::cout << "Starting " << generated_nfts_count << "th nft generation." << std::endl;
+            generate_single_nft(generated_nfts_count);
+        }
 
-		cv::Mat frontLayer = _imagesMap[currentImagePath];
-		if (frontLayer.empty()) {
-			std::cerr << "Error loading front layer image: " << currentImagePath << std::endl;
-			continue;
-		}
+        save_nfts_in_parallel(_generated_nfts_metadatas);
 
-		frontLayer = convert_to_rgba(frontLayer);
-		alpha_composite(baseLayer, frontLayer, res);
-		baseLayer = res.clone();
+        std::vector<std::pair<std::pair<int, int>, size_t>> sorted_traits(_nfts_grouped_traits.begin(), _nfts_grouped_traits.end());
 
-		first_trait = first_trait->get_next_trait();
+        // Step 2: Sort the vector by traitFolderID
+        std::sort(sorted_traits.begin(), sorted_traits.end(), [](const auto &a, const auto &b) {
+            return a.first.first < b.first.first;  // Sort by traitFolderID
+        });
 
-		if (first_trait != std::nullopt) nftMetadata.addTrait(first_trait.value());
+        // Output header
+        std::cout << "TraitFolderID | TraitID | Count\n";
+        std::cout << "------------------------------------\n";
 
-		traitDirIndex++;
+        // Step 3: Output the sorted traits
+        for (const auto &entry : sorted_traits)
+        {
+            int trait_directory_id = entry.first.first;  // Folder ID
+            int trait_id = entry.first.second;           // Trait ID
+            size_t count = entry.second;                 // Count of times this trait was generated
 
-	} while (traitDirIndex < _traitsDirectories.size() - 1);
+            std::cout << trait_directory_id << "            | " << trait_id << "      | " << count << '\n';
+        }
+    }
+    catch (const std::exception &exception)
+    {
+        // logger.log(exception);
+        return false;
+    }
 
-	std::string directory = nftgen::settings::get_instance().get_generated_nfts_directory();
-	create_gen_directory(directory);
-
-	// if the generated nft hasn't been generated before, we increase the  generated nfts count
-	if (addGeneratedNft(nftMetadata)) {
-		generatedNftCount++;
-
-		const std::string generatedNftNumber = std::to_string(generatedNftCount);
-		// save the generated nft
-		cv::imwrite(directory + "/" + generatedNftNumber + ".png", res);
-		// save the nft metadata
-		std::ofstream outFile(directory + "/" + generatedNftNumber + ".json", std::ios::trunc);
-		if (outFile.is_open()) {
-			outFile << nftMetadata.to_json().dump(4);
-			outFile.close();
-		} else {
-			std::cout << "Failed to save nft" + generatedNftNumber + "metadata" << std::endl;
-		}
-	} else {
-		std::cout << "Skipping already generated nft with hash:" + std::to_string(nftMetadata.generate_traits_hash())
-				  << std::endl;
-	}
+    return true;
 }
 
-void nftgen::generator::set_generation_chances(TraitFolder &traitFolder) {
-	nftgen::calculator calculator;
-	calculator.set_equal_geneartion_chances(traitFolder.getTraits());
+void nftgen::generator::generate_single_nft [[nodiscard]] (int &generated_nft_count)
+{
+    NFT_Metadata nft_metadata(_nft_template_metadata);
+
+    std::optional<Trait> current_trait = std::nullopt;
+
+    auto trait_directory_index = 0;
+    while (trait_directory_index < _traits_directories.size())
+    {
+        auto generatedPair = Trait::get_next_trait(trait_directory_index);
+        if (generatedPair.second == SkippedFolder)
+        {
+            trait_directory_index++;
+            continue;
+        }
+
+        // Something unexpected happened, trying again.
+        current_trait = std::move(generatedPair.first);
+        if (current_trait == std::nullopt)
+            continue;
+
+        // On successfully generations
+        if (generatedPair.second == SuccessfullyGenerated)
+        {
+            // Check if all exceptions are met and continue to next folder,
+            // otherwise retry same folder with different until all exceptions are met.
+
+            //_exceptions;
+            // if (current_trait->meets_all_exceptions())
+            //{
+            //    continue;
+            //}
+
+            //// Set next traits exceptions
+            // if (current_trait->apply_next_traits_exceptions())
+            //{
+            //     continue;
+            // }
+
+            // Continue to next folder.
+            trait_directory_index++;
+            nft_metadata.add_trait(std::move(current_trait.value()));
+            continue;
+        }
+    }
+
+    // if the generated nft hasn't been generated before, we increase the
+    // generated nfts count
+    if (add_generated_nft(nft_metadata))
+    {
+        generated_nft_count++;
+    }
+    else
+    {
+        std::cout << "Skipping already generated nft with hash:" + std::to_string(nft_metadata.generate_traits_hash()) << std::endl;
+    }
 }
 
-cv::Mat generator::convert_to_rgba(const cv::Mat &input) {
-	cv::Mat output;
-
-	if (input.channels() == 4) {
-		// If already RGBA, just return a copy
-		output = input.clone();
-	} else {
-		// Convert to RGBA
-		cv::cvtColor(input, output, cv::COLOR_BGR2BGRA); // BGR to BGRA
-	}
-
-	return output;
+void nftgen::generator::set_generation_chances(TraitDirectory &trait_directory)
+{
+    nftgen::calculator calculator;
+    calculator.set_equal_geneartion_chances(trait_directory.get_traits());
 }
 
-void generator::alpha_composite(const cv::Mat &baseLayer, const cv::Mat &frontLayer, cv::Mat &res) {
-	CV_Assert(baseLayer.size() == frontLayer.size());
-	CV_Assert(baseLayer.type() == CV_8UC4 && frontLayer.type() == CV_8UC4);
-	res.create(baseLayer.size(), baseLayer.type());
+cv::Mat generator::convert_to_rgba [[nodiscard]] (const cv::Mat &input)
+{
+    cv::Mat output;
 
-	const uchar *basePtr = baseLayer.data;
-	const uchar *frontPtr = frontLayer.data;
-	uchar		*resPtr = res.data;
+    if (input.channels() == 4)
+    {
+        // If already RGBA, just return a copy
+        output = input.clone();
+    }
+    else
+    {
+        // Convert to RGBA
+        cv::cvtColor(input, output, cv::COLOR_BGR2BGRA);  // BGR to BGRA
+    }
 
-	int numPixels = baseLayer.rows * baseLayer.cols;
-	for (int i = 0; i < numPixels; i++) {
-		float alpha_B = frontPtr[i * 4 + 3] / 255.0f;
-		if (alpha_B == 0 && frontPtr[i * 4 + 2] == 0 && frontPtr[i * 4 + 1] == 0) continue;
-
-		for (int c = 0; c < 3; c++) {
-			resPtr[i * 4 + c] = static_cast<uchar>(alpha_B * frontPtr[i * 4 + c] + (1 - alpha_B) * basePtr[i * 4 + c]);
-		}
-		resPtr[i * 4 + 3] = 255;
-	}
+    return output;
 }
 
-std::optional<Trait> generator::generate_first_random_trait [[nodiscard]] () {
-	std::sort(_traitsDirectories.begin(), _traitsDirectories.end(), [](auto &dir1, auto &dir2) {
-		return dir1.get_path() < dir2.get_path();
-	});
+void generator::alpha_composite(const cv::Mat &base_layer, const cv::Mat &front_layer, cv::Mat &res)
+{
+    CV_Assert(base_layer.size() == front_layer.size());
+    CV_Assert(base_layer.type() == CV_8UC4 && front_layer.type() == CV_8UC4);
+    res.create(base_layer.size(), base_layer.type());
 
-	for (int i = 0; i < _traitsDirectories.size(); i++) {
-		_traitsDirectories[i].setId(i);
+    const uchar *base_ptr = base_layer.data;
+    const uchar *front_ptr = front_layer.data;
+    uchar *result_ptr = res.data;
 
-		for (auto &trait : _traitsDirectories[i].getTraits()) { trait.set_trait_folder_id(i); }
-	}
+    int pixels_number = base_layer.rows * base_layer.cols;
+    for (int i = 0; i < pixels_number; i++)
+    {
+        float alpha_B = front_ptr[i * 4 + 3] / 255.0f;
+        if (alpha_B == 0 && front_ptr[i * 4 + 2] == 0 && front_ptr[i * 4 + 1] == 0)
+            continue;
 
-	auto time = Trait::get_unix_time();
+        for (int c = 0; c < 3; c++)
+        {
+            result_ptr[i * 4 + c] = static_cast<uchar>(alpha_B * front_ptr[i * 4 + c] + (1 - alpha_B) * base_ptr[i * 4 + c]);
+        }
 
-	std::srand(time);
+        result_ptr[i * 4 + 3] = 255;
+    }
+}
 
-	return _traitsDirectories[0].getTraits()[std::rand() % _traitsDirectories[0].getTraits().size()];
+void generator::process_nfts(int start_index, int end_index, std::vector<NFT_Metadata> &_generated_nfts)
+{
+    for (int nft_index = start_index; nft_index < end_index; ++nft_index)
+    {
+        auto &generated_nft = _generated_nfts[nft_index];
+        generated_nft.sort_traits();
+
+        const auto &traits = generated_nft.get_traits();
+
+        cv::Mat base_layer = traits.front().get_matrix();
+        base_layer = convert_to_rgba(base_layer);
+        cv::Mat res(base_layer.size(), base_layer.type());
+
+        for (int trait_index = 1; trait_index < generated_nft.get_traits().size(); ++trait_index)
+        {
+            const auto &current_trait = traits[trait_index];
+
+            cv::Mat front_layer = current_trait.get_matrix();
+            if (front_layer.empty())
+            {
+                std::cerr << "Error loading front layer image: " << current_trait.get_filename() << std::endl;
+                continue;
+            }
+
+            front_layer = convert_to_rgba(front_layer);
+            alpha_composite(base_layer, front_layer, res);
+            base_layer = res.clone();
+        }
+
+        const std::string generated_nft_number = std::to_string(nft_index + 1);
+        // Save the generated NFT
+        cv::imwrite(_generated_nfts_directory + "/" + generated_nft_number + ".png", res, {cv::ImwriteFlags::IMWRITE_PNG_COMPRESSION, 1});
+        generated_nft.name += " #" + generated_nft_number;
+        // Save the NFT metadata
+        std::ofstream output_file(_generated_nfts_directory + "/" + generated_nft_number + ".json", std::ios::trunc);
+        if (output_file.is_open())
+        {
+            output_file << generated_nft.to_json().dump(4);
+            output_file.close();
+        }
+        else
+        {
+            std::cout << "Failed to save nft " + generated_nft_number + " metadata" << std::endl;
+        }
+    }
+}
+
+void generator::save_nfts_in_parallel(std::vector<NFT_Metadata> &_generated_nfts)
+{
+    const int threads_count = 6;
+    const int chunk_size = _generated_nfts.size() / threads_count;
+    std::vector<std::thread> threads;
+
+    // Create threads
+    for (int i = 0; i < threads_count; ++i)
+    {
+        int start_index = i * chunk_size;
+        int end_index = (i == threads_count - 1) ? _generated_nfts.size() : (i + 1) * chunk_size;
+
+        // Launch a new thread for each chunk
+        threads.push_back(std::thread(&generator::process_nfts, this, start_index, end_index, std::ref(_generated_nfts)));
+    }
+
+    // Join threads back to the main thread
+    for (auto &t : threads)
+    {
+        t.join();
+    }
 }

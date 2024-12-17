@@ -43,7 +43,7 @@ else()
     message(WARNING "clang-format not found. Formatting will not be applied.")
 endif()
 
-add_executable(nftgen "main.cpp" ${SOURCE_FILES} "src/workflow/settings.cpp")
+add_executable(nftgen "main.cpp" ${SOURCE_FILES} "src/workflow/settings.cpp" "src/workflow/stringutilities.cpp")
 
 target_link_libraries(nftgen ${OpenCV_LIBS})
 target_link_libraries(nftgen ${Boost_LIBRARIES})
