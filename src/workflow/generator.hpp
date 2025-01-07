@@ -24,17 +24,17 @@ public:
     virtual ~generator() = default;
 
 public:
-    bool generate [[nodiscard]] (unsigned long nfts_count);
+    [[nodiscard]] bool generate(unsigned long nfts_count);
     static std::vector<TraitDirectory> _traits_directories;
 
 private:
-    void generate_single_nft [[nodiscard]] (int &generated_nft_count);
-    bool load_directories [[nodiscard]] ();
+    void generate_single_nft (int &generated_nft_count);
+    [[nodiscard]] bool load_directories();
     void set_generation_chances(TraitDirectory &trait_directory);
-    cv::Mat convert_to_rgba [[nodiscard]] (const cv::Mat &input);
+    [[nodiscard]] cv::Mat convert_to_rgba(const cv::Mat &input);
     void alpha_composite(const cv::Mat &base_layer, const cv::Mat &front_layer, cv::Mat &res);
     void create_gen_directory(std::string_view dir) const;
-    bool add_generated_nft [[nodiscard]] (nftgen::NFT_Metadata &nft_metadata);
+    [[nodiscard]] bool add_generated_nft(nftgen::NFT_Metadata &nft_metadata);
 
 private:
     void process_nfts(int start_index, int end_index, std::vector<NFT_Metadata> &_generated_nfts);

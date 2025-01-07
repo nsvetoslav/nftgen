@@ -10,7 +10,7 @@ using namespace nftgen;
 
 std::vector<TraitDirectory> generator::_traits_directories{};
 
-bool generator::load_directories [[nodiscard]] ()
+[[nodiscard]] bool generator::load_directories()
 {
     std::string root_path = _traits_directories_root_path;
     utilities::filemanager fileManager;
@@ -84,7 +84,7 @@ void generator::create_gen_directory(std::string_view dir) const
     std::filesystem::create_directory(dir);
 }
 
-bool nftgen::generator::add_generated_nft [[nodiscard]] (nftgen::NFT_Metadata &nft_metadata)
+[[nodiscard]] bool nftgen::generator::add_generated_nft(nftgen::NFT_Metadata &nft_metadata)
 {
     size_t traits_hash = nft_metadata.generate_traits_hash();
     if (_nfts_hashes.find(traits_hash) != _nfts_hashes.end())
@@ -109,7 +109,7 @@ nftgen::generator::generator(std::string trait_directories_root_path) : _traits_
     create_gen_directory(_generated_nfts_directory);
 }
 
-bool generator::generate [[nodiscard]] (unsigned long nfts_count)
+[[nodiscard]] bool generator::generate(unsigned long nfts_count)
 {
     try
     {
@@ -185,7 +185,7 @@ bool generator::generate [[nodiscard]] (unsigned long nfts_count)
     return true;
 }
 
-void nftgen::generator::generate_single_nft [[nodiscard]] (int &generated_nft_count)
+void nftgen::generator::generate_single_nft(int &generated_nft_count)
 {
     NFT_Metadata nft_metadata(_nft_template_metadata);
 
@@ -249,7 +249,7 @@ void nftgen::generator::set_generation_chances(TraitDirectory &trait_directory)
     calculator.set_equal_geneartion_chances(trait_directory.get_traits());
 }
 
-cv::Mat generator::convert_to_rgba [[nodiscard]] (const cv::Mat &input)
+[[nodiscard]] cv::Mat generator::convert_to_rgba(const cv::Mat &input)
 {
     cv::Mat output;
 
