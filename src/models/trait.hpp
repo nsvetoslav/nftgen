@@ -33,8 +33,11 @@ enum GenerationResult
 struct Trait
 {
 public:
-    void set_generation_chance(double &generation_chance);
+    void set_generation_chance(double generation_chance);
     const double get_generation_chance [[nodiscard]] () const;
+
+    void set_gen_order_trait_directory_id(int trait_folder_id);
+    int get_gen_order_trait_directory_id [[nodiscard]] () const;
 
     void set_trait_directory_id(int trait_folder_id);
     int get_trait_directory_id [[nodiscard]] () const;
@@ -43,7 +46,7 @@ public:
     const int get_trait_id [[nodiscard]] () const;
 
     const cv::Mat &get_matrix [[nodiscard]] () const;
-    void set_matrix(const cv::Mat &matrix);
+    void set_matrix(cv::Mat &matrix);
 
     void set_rarity(const Rarities rarity);
     Rarities get_rarity [[nodiscard]] () const;
@@ -57,9 +60,9 @@ public:
     std::string_view get_directory_name [[nodiscard]] () const;
     void set_directory_name(const std::string &directory_name);
 
-    static std::pair < std::optional<Trait>, GenerationResult> get_next_trait [[nodiscard]] (int trait_folder_id);
+    static std::pair<Trait *, GenerationResult> get_next_trait [[nodiscard]] (int trait_folder_id, bool doNotApplyGenerationChances = false);
 
-    //bool meets_all_exceptions(const Exceptions& exceptions);
+    // bool meets_all_exceptions(const Exceptions& exceptions);
 
 private:
     int _trait_id{};
@@ -68,6 +71,7 @@ private:
     std::string _directory_name;
     double _generation_chance{};
     bool _is_excluded{};
+    int _gen_order_trait_folder_id{};
     int _trait_folder_id{};
     Rarities _rarity{};
     cv::Mat _image_matrix;

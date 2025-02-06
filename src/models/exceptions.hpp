@@ -7,77 +7,60 @@ namespace nftgen
 {
 enum class ExceptionsTypes
 {
-    NotGenerateWith = 0,
+    Undefined = -1,
+    NotGenerateTraitWithDirectory = 0,
     GenerateOnlyWith = 1,
     HigherGenerationChance = 2,
     LowerGenerationChance = 3,
     GenerateLast = 4,
-    RenderBetween,
-    Undefined,
+    RenderTraitBetweenDirectories = 5,
+    GenerateTraitOnlyWithTraits = 6,
+    NotGenerateDirectoryWithDirectory = 7,
 };
-
-inline static const ExceptionsTypes exceptionStringToEnum(const std::string &e)
-{
-    const std::map<std::string, ExceptionsTypes> MyEnumStrings{
-        {"NotGenerateWith", ExceptionsTypes::NotGenerateWith},
-        {"GenerateOnlyWith", ExceptionsTypes::GenerateOnlyWith},
-        {"HigherGenerationChance", ExceptionsTypes::HigherGenerationChance},
-        {"LowerGenerationChance", ExceptionsTypes::LowerGenerationChance},
-        {"GenerateLast", ExceptionsTypes::GenerateLast},
-        {"RenderBetween", ExceptionsTypes::RenderBetween},
-    };
-    auto it = MyEnumStrings.find(e);
-    return it == MyEnumStrings.end() ? ExceptionsTypes::Undefined : it->second;
-}
 
 class TraitDirectoryException
 {
 public:
-    std::string directory;
-    std::string exceptionnedTraitDirectory;
-    ExceptionsTypes exceptionType;
-
-    void from_json(const nlohmann::json &j)
+    TraitDirectoryException(std::string apply_from_directory, std::string apply_to_directory, ExceptionsTypes exceptionType)
     {
-        if (j.contains("directory"))
-            j.at("directory").get_to(directory);
-        if (j.contains("exceptionnedTraitDirectory"))
-            j.at("exceptionnedTraitDirectory").get_to(exceptionnedTraitDirectory);
-        if (j.contains("exceptionType"))
-        {
-            std::string exception;
-            j.at("exceptionType").get_to(exception);
-            exceptionType = exceptionStringToEnum(exception);
-        }
+        this->apply_from_directory = apply_from_directory;
+        this->apply_to_directory = apply_to_directory;
+        this->exceptionType = exceptionType;
     }
+
+public:
+    std::string apply_from_directory;
+    std::string apply_to_directory;
+    ExceptionsTypes exceptionType;
 };
 
 class TraitException
 {
 public:
-    std::string trait;
-    std::string exceptionnedTraitDirectory;
-    std::string exceptionnedTrait;
-    ExceptionsTypes exceptionType;
-    std::string exceptionnedDirectory;
-
-    void from_json(const nlohmann::json &j)
+    TraitException(std::string apply_from_trait,
+                   std::string apply_from_trait_dir,
+                   std::string apply_to_trait,
+                   std::string apply_to_directory,
+                   ExceptionsTypes exceptionType,
+                   std::optional<std::vector<std::string>> apply_with_traits)
     {
-        if (j.contains("trait"))
-            j.at("trait").get_to(trait);
-        if (j.contains("exceptionnedTraitDirectory"))
-            j.at("exceptionnedTraitDirectory").get_to(exceptionnedTraitDirectory);
-        if (j.contains("exceptionnedTrait"))
-            j.at("exceptionnedTrait").get_to(exceptionnedTrait);
-        if (j.contains("exceptionType"))
-        {
-            std::string exception;
-            j.at("exceptionType").get_to(exception);
-            exceptionType = exceptionStringToEnum(exception);
-        }
-        if (j.contains("exceptionnedDirectory"))
-            j.at("exceptionnedDirectory").get_to(exceptionnedDirectory);
+        this->apply_from_trait = apply_from_trait;
+        this->apply_from_trait_dir = apply_from_trait_dir;
+
+        this->apply_to_trait = apply_to_trait;
+        this->exceptionType = exceptionType;
+        this->apply_to_directory = apply_to_directory;
+        this->apply_with_traits = apply_with_traits;
     }
+
+public:
+    std::string apply_from_trait;
+    std::string apply_from_trait_dir;
+
+    std::string apply_to_trait;
+    std::string apply_to_directory;
+    std::optional<std::vector<std::string>> apply_with_traits;
+    ExceptionsTypes exceptionType;
 };
 
 class Exceptions
@@ -85,30 +68,6 @@ class Exceptions
 public:
     std::vector<TraitDirectoryException> traitDirectoriesExceptions;
     std::vector<TraitException> traitsExceptions;
-
-    // from_json with contains() checks for each vector
-    void from_json(const nlohmann::json &j)
-    {
-        if (j.contains("onGeneratedTraitDirectoriesExceptions") && j["onGeneratedTraitDirectoriesExceptions"].is_array())
-        {
-            for (const auto &exception : j["onGeneratedTraitDirectoriesExceptions"])
-            {
-                TraitDirectoryException directoryException;
-                directoryException.from_json(exception);
-                traitDirectoriesExceptions.push_back(directoryException);
-            }
-        }
-
-        if (j.contains("onGeneratedTraitsExceptions") && j["onGeneratedTraitsExceptions"].is_array())
-        {
-            for (const auto &exception : j["onGeneratedTraitsExceptions"])
-            {
-                TraitException traitException;
-                traitException.from_json(exception);
-                traitsExceptions.push_back(traitException);
-            }
-        }
-    }
 };
 
 }  // namespace nftgen

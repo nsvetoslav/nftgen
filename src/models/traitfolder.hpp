@@ -9,22 +9,6 @@
 
 namespace nftgen
 {
-
-class TraitFolderException
-{
-public:
-    TraitFolderException(int exceptioned_trait_directory_id, nftgen::ExceptionsTypes exception_type)
-        : _exception_type(exception_type), _exceptioned_trait_directory_id(exceptioned_trait_directory_id)
-    {
-    }
-
-    virtual ~TraitFolderException() = default;
-
-private:
-    int _exceptioned_trait_directory_id{};
-    nftgen::ExceptionsTypes _exception_type{};
-};
-
 struct TraitDirectory
 {
 public:
@@ -34,7 +18,7 @@ public:
     std::string get_directory_name [[nodiscard]] ();
     void set_directory_name(std::string directory_name);
 
-    void set_traits(std::vector<std::pair<std::string /*path*/, std::string> /*file_name*/> traits, std::string direcotry_name, int &directory_index);
+    void set_traits(std::vector<std::pair<std::string /*path*/, std::string> /*file_name*/> traits, std::string direcotry_name, int &gen_directory_index, int &directory_index);
     std::vector<nftgen::Trait> &get_traits [[nodiscard]] ();
 
     const int &get_id [[nodiscard]] () const;
@@ -43,15 +27,16 @@ public:
     const double get_generation_chance [[nodiscard]] () const;
     void set_generation_chance(double generation_chance);
 
-    void add_exception(int trait_directory_id, nftgen::ExceptionsTypes exception_type);
+    [[nodiscard]] int get_gen_order() const;
+    void set_gen_order(int gen_order);
 
 private:
     std::string _path;
     std::string _directory_name;
     std::vector<nftgen::Trait> _traits{};
-    std::vector<TraitFolderException> _exceptions;
     double _generation_chance{};
-    int _id{};
+    int _generation_order{};
+    int _id{};    
 };
 
 }  // namespace nftgen

@@ -159,10 +159,10 @@ const std::vector<Trait> &NFT_Metadata::get_traits() const
 
 void NFT_Metadata::sort_traits()
 {
-    std::sort(_traits.begin(), _traits.end(), [](auto &a, auto &b) { return a.get_trait_directory_id() < b.get_trait_directory_id(); });
+    std::sort(_traits.begin(), _traits.end(), [](auto &a, auto &b) { return a.get_gen_order_trait_directory_id() < b.get_gen_order_trait_directory_id(); });
 }
 
-void NFT_Metadata::add_trait(const Trait &trait)
+void NFT_Metadata::add_trait(Trait &trait)
 {
     add_attribute_by_trait(trait);
     _traits.push_back(trait);

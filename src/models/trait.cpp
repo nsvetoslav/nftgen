@@ -7,7 +7,7 @@
 
 namespace nftgen
 {
-void Trait::set_generation_chance(double &generationChance)
+void Trait::set_generation_chance(double generationChance)
 {
     _generation_chance = generationChance;
 }
@@ -15,6 +15,11 @@ void Trait::set_generation_chance(double &generationChance)
 const double Trait::get_generation_chance [[nodiscard]] () const
 {
     return _generation_chance;
+}
+
+void Trait::set_gen_order_trait_directory_id(int id)
+{
+    _gen_order_trait_folder_id = id;
 }
 
 void Trait::set_trait_directory_id(int id)
@@ -32,7 +37,7 @@ const cv::Mat &Trait::get_matrix [[nodiscard]] () const
     return _image_matrix;
 }
 
-std::pair<std::optional<Trait>, GenerationResult> Trait::get_next_trait(int trait_directory_id)
+std::pair<Trait*, GenerationResult> Trait::get_next_trait(int trait_directory_id, bool doNotApplyGenerationChances)
 {
     auto &trait_directory = generator::_traits_directories[trait_directory_id];
     auto &current_folder_traits = trait_directory.get_traits();
@@ -43,10 +48,10 @@ std::pair<std::optional<Trait>, GenerationResult> Trait::get_next_trait(int trai
     std::uniform_real_distribution<float> uniform_dis_trait_directory(0.0f, 1.0f);
 
     float rand_value_trait_folder = uniform_dis_trait_directory(mt_gen_trait_directory);
-    if (rand_value_trait_folder > trait_directory.get_generation_chance())
+    if (rand_value_trait_folder > trait_directory.get_generation_chance() && !doNotApplyGenerationChances)
     {
         std::cout << "Skipping directory ID: " << trait_directory_id << std::endl;
-        return std::make_pair(std::nullopt, SkippedFolder);
+        return std::make_pair(nullptr, SkippedFolder);
     }
     // end check if gen chance for folder
 
@@ -57,7 +62,7 @@ std::pair<std::optional<Trait>, GenerationResult> Trait::get_next_trait(int trai
 
     float random_value = uniform_dis_trait(mt_gen_trait);
 
-    std::optional<Trait> next_trait = std::nullopt;
+    Trait* next_trait = nullptr;
 
     float cumulative_probability = 0.0f;
     for (size_t i = 0; i < current_folder_traits.size(); ++i)
@@ -65,7 +70,7 @@ std::pair<std::optional<Trait>, GenerationResult> Trait::get_next_trait(int trai
         cumulative_probability += current_folder_traits[i].get_generation_chance();
         if (random_value <= cumulative_probability)
         {
-            next_trait = current_folder_traits[i];
+            next_trait = &current_folder_traits[i];
             break;
         }
     }
@@ -79,6 +84,11 @@ Rarities Trait::get_rarity [[nodiscard]] () const
     return _rarity;
 }
 
+int Trait::get_gen_order_trait_directory_id [[nodiscard]] () const
+{
+    return _gen_order_trait_folder_id;
+}
+
 int Trait::get_trait_directory_id [[nodiscard]] () const
 {
     return _trait_folder_id;
@@ -89,7 +99,7 @@ void Trait::set_trait_id(int trait_id)
     _trait_id = trait_id;
 }
 
-void Trait::set_matrix(const cv::Mat &image_matrix)
+void Trait::set_matrix(cv::Mat &image_matrix)
 {
     _image_matrix = image_matrix;
 }

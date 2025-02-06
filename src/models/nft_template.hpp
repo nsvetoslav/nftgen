@@ -68,7 +68,7 @@ public:
 public:
     const std::vector<Trait> &get_traits() const;
     void sort_traits();
-    void add_trait(const Trait &trait);
+    void add_trait(Trait &trait);
     size_t generate_traits_hash() const;
 
 private:
