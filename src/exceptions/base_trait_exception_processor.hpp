@@ -17,9 +17,9 @@ namespace typedexceptions
 class BaseTraitExceptionProcessor : public IExceptionProcessor
 {
 public:
-    BaseTraitExceptionProcessor(NFT_Metadata &nftMetadata, const Trait &generated_trait, const TraitException &trait_exception) noexcept
+    BaseTraitExceptionProcessor(NFT_Metadata &nftMetadata, const Trait &generatedTrait, const TraitException &traitException) noexcept
         :
-        _generated_trait(generated_trait), _trait_exception(trait_exception), _nftMetadata(nftMetadata)
+        _generatedTrait(generatedTrait), _traitException(traitException), _nftMetadata(nftMetadata)
     {
     }
 
@@ -28,25 +28,25 @@ public:
 public:
     [[nodiscard]] inline bool MeetsGenerationConditions() override
     {
-        return MeetsGenerationConditions(_nftMetadata, _generated_trait, _trait_exception);
+        return MeetsGenerationConditions(_nftMetadata, _generatedTrait, _traitException);
     }
 
     inline bool ContinueToNextDirectory() const override
     {
-        return continue_to_next_directory;
+        return continueToNextDirectory;
     }
 
     inline bool ContinueToNextTrait() const override
     {
-        return continue_to_next_trait;
+        return continueToNextTrait;
     }
 
 private:
-    [[nodiscard]] virtual inline bool MeetsGenerationConditions(NFT_Metadata &nftMetadata, const Trait &_trait, const TraitException context)
+    [[nodiscard]] virtual inline bool MeetsGenerationConditions(NFT_Metadata &nftMetadata, const Trait &trait, const TraitException context)
     {
-        for (Trait &metadata_trait : nftMetadata.get_traits())
+        for (Trait &metadataTrait : nftMetadata.get_traits())
         {
-            if (!CheckMetadataTrait(metadata_trait))
+            if (!CheckMetadataTrait(metadataTrait))
                 return false;
         }
 
@@ -54,7 +54,7 @@ private:
     }
 
 protected:
-    [[nodiscard]] virtual bool CheckMetadataTrait(const Trait &metadata_trait) = 0;
+    [[nodiscard]] virtual bool CheckMetadataTrait(const Trait &metadataTrait) = 0;
 
 protected:
     [[nodiscard]] inline const NFT_Metadata &GetNftMetadata() const
@@ -64,41 +64,41 @@ protected:
 
     [[nodiscard]] inline const Trait &GetCurrentGeneratedTrait() const
     {
-        return _generated_trait;
+        return _generatedTrait;
     }
 
     [[nodiscard]] inline const TraitException &GetTraitException() const
     {
-        return _trait_exception;
+        return _traitException;
     }
 
-    inline void SetContinueToNextTrait(bool continue_to_next_trait)
+    inline void SetContinueToNextTrait(bool continueToNextTrait)
     {
-        this->continue_to_next_trait = continue_to_next_trait;
+        this->continueToNextTrait = continueToNextTrait;
     }
 
-    inline void SetContinueToNextDirectory(bool continue_to_next_directory)
+    inline void SetContinueToNextDirectory(bool continueToNextDirectory)
     {
-        this->continue_to_next_directory = continue_to_next_directory;
+        this->continueToNextDirectory = continueToNextDirectory;
     }
 
 private:
     NFT_Metadata &_nftMetadata;
-    const Trait &_generated_trait;
-    const TraitException _trait_exception;
+    const Trait &_generatedTrait;
+    const TraitException _traitException;
 
-    bool continue_to_next_trait{};
-    bool continue_to_next_directory{};
+    bool continueToNextTrait{};
+    bool continueToNextDirectory{};
 };
 
 class BaseTraitDirectoryExceptionProcessor : public IExceptionProcessor
 {
 public:
     BaseTraitDirectoryExceptionProcessor(NFT_Metadata &nftMetadata,
-                                         const Trait &generated_trait,
-                                         const TraitDirectoryException &trait_directory_exception) noexcept
+                                         const Trait &generatedTrait,
+                                         const TraitDirectoryException &traitDirectoryException) noexcept
         :
-        _generated_trait(generated_trait), _trait_directory_exception(trait_directory_exception), _nftMetadata(nftMetadata)
+        _generatedTrait(generatedTrait), _traitDirectoryException(traitDirectoryException), _nftMetadata(nftMetadata)
     {
     }
 
@@ -107,27 +107,27 @@ public:
 public:
     [[nodiscard]] inline bool MeetsGenerationConditions() override
     {
-        return MeetsGenerationConditions(_nftMetadata, _generated_trait, _trait_directory_exception);
+        return MeetsGenerationConditions(_nftMetadata, _generatedTrait, _traitDirectoryException);
     }
 
     inline bool ContinueToNextDirectory() const override
     {
-        return continue_to_next_directory;
+        return continueToNextDirectory;
     }
 
     inline bool ContinueToNextTrait() const override
     {
-        return continue_to_next_trait;
+        return continueToNextTrait;
     }
 
 private:
     [[nodiscard]] virtual inline bool MeetsGenerationConditions(NFT_Metadata &nftMetadata,
-                                                                const Trait &_trait,
+                                                                const Trait &trait,
                                                                 const TraitDirectoryException context)
     {
-        for (Trait &metadata_trait : nftMetadata.get_traits())
+        for (Trait &metadataTrait : nftMetadata.get_traits())
         {
-            if (!CheckMetadataTrait(metadata_trait))
+            if (!CheckMetadataTrait(metadataTrait))
                 return false;
         }
 
@@ -135,7 +135,7 @@ private:
     }
 
 protected:
-    [[nodiscard]] virtual bool CheckMetadataTrait(const Trait &metadata_trait) = 0;
+    [[nodiscard]] virtual bool CheckMetadataTrait(const Trait &metadataTrait) = 0;
 
 protected:
     [[nodiscard]] inline const NFT_Metadata &GetNftMetadata() const
@@ -145,31 +145,31 @@ protected:
 
     [[nodiscard]] inline const Trait &GetCurrentGeneratedTrait() const
     {
-        return _generated_trait;
+        return _generatedTrait;
     }
 
     [[nodiscard]] inline const TraitDirectoryException &GetTraitDirectoryException() const
     {
-        return _trait_directory_exception;
+        return _traitDirectoryException;
     }
 
-    inline void SetContinueToNextTrait(bool continue_to_next_trait)
+    inline void SetContinueToNextTrait(bool continueToNextTrait)
     {
-        this->continue_to_next_trait = continue_to_next_trait;
+        this->continueToNextTrait = continueToNextTrait;
     }
 
-    inline void SetContinueToNextDirectory(bool continue_to_next_directory)
+    inline void SetContinueToNextDirectory(bool continueToNextDirectory)
     {
-        this->continue_to_next_directory = continue_to_next_directory;
+        this->continueToNextDirectory = continueToNextDirectory;
     }
 
 private:
     NFT_Metadata &_nftMetadata;
-    const Trait &_generated_trait;
-    const TraitDirectoryException _trait_directory_exception;
+    const Trait &_generatedTrait;
+    const TraitDirectoryException _traitDirectoryException;
 
-    bool continue_to_next_trait{};
-    bool continue_to_next_directory{};
+    bool continueToNextTrait{};
+    bool continueToNextDirectory{};
 };
 
 }  // namespace typedexceptions

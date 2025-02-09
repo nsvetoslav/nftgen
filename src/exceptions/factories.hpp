@@ -14,23 +14,23 @@ class TraitExceptionsFactory
 {
 public:
     static std::unique_ptr<IExceptionProcessor> Get(NFT_Metadata &nftMetadata,
-                                                    const TraitException &trait_exception,
-                                                    const Trait &generated_trait,
+                                                    const TraitException &traitException,
+                                                    const Trait &generatedTrait,
                                                     Exceptions& allExceptions)
     {
-        switch (trait_exception.exceptionType)
+        switch (traitException.exceptionType)
         {
             case ExceptionsTypes::NotGenerateTraitWithDirectory:
                 return std::make_unique<NotGenerateTraitWithDirectoryExceptionProcessor>(
                     NotGenerateTraitWithDirectoryExceptionProcessor(nftMetadata,
-                                                                    generated_trait,
-                                                                    trait_exception));
+                                                                    generatedTrait,
+                                                                    traitException));
 
             case ExceptionsTypes::GenerateTraitOnlyWithTraits:
                 return std::make_unique<GenerateTraitOnlyWithTraitsExceptionProcessor>(
                     GenerateTraitOnlyWithTraitsExceptionProcessor(nftMetadata,
-                                                                  generated_trait,
-                                                                  trait_exception,
+                                                                  generatedTrait,
+                                                                  traitException,
                                                                   allExceptions));
 
             default:

@@ -20,39 +20,39 @@ namespace nftgen
 class generator
 {
 public:
-    generator(std::string trait_directories_root_path);
+    generator(std::string traitDirectoriesRootPath);
     virtual ~generator() = default;
 
 public:
-    [[nodiscard]] bool generate(unsigned long nfts_count);
-    static std::vector<TraitDirectory> _traits_directories;
+    [[nodiscard]] bool generate(unsigned long nftsCount);
+    static std::vector<TraitDirectory> _traitsDirectories;
 
 private:
-    void generate_single_nft(int &generated_nft_count);
-    [[nodiscard]] bool load_directories();
-    void set_generation_chances(TraitDirectory &trait_directory);
-    [[nodiscard]] cv::Mat convert_to_rgba(const cv::Mat &input);
-    void alpha_composite(const cv::Mat &base_layer, const cv::Mat &front_layer, cv::Mat &res);
-    void create_gen_directory(std::string_view dir) const;
-    [[nodiscard]] bool add_generated_nft(nftgen::NFT_Metadata &nft_metadata);
-    void CheckTraitDirectoryExceotions(NFT_Metadata &nft_metadata, Trait &current_trait, bool &bContinueNextDir, bool &bContinueNextTrait);
-    void CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT_Metadata& nftMetadata, bool& continueToNextTrait);
-    void CheckTraitExceotions(NFT_Metadata &nft_metadata, Trait &current_trait, bool &bContinueNextDir, bool &bContinueNextTrait);
+    void GenerateSingleNFT(int &generatedNftCount);
+    [[nodiscard]] bool LoadDirectories();
+    void SetGenerationChances(TraitDirectory &traitDirectory);
+    [[nodiscard]] cv::Mat ConvertToRgba(const cv::Mat &input);
+    void AlphaComposite(const cv::Mat &baseLayer, const cv::Mat &frontLayer, cv::Mat &res);
+    void CreateGenDirectory(std::string_view dir) const;
+    [[nodiscard]] bool AddGeneratedNFT(nftgen::NFT_Metadata &nftMetadata);
+    void CheckTraitDirectoryExceotions(NFT_Metadata &nftMetadata, Trait &currentTrait, bool &continueNextDir, bool &continueNextTrait);
+    void CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT_Metadata &nftMetadata, bool &continueToNextTrait);
+    void CheckTraitExceotions(NFT_Metadata &nftMetadata, Trait &currentTrait, bool &continueNextDir, bool &continueNextTrait);
 
 private:
-    void process_nfts(int start_index, int end_index, std::vector<NFT_Metadata> &_generated_nfts);
-    void save_nfts_in_parallel(std::vector<NFT_Metadata> &_generated_nfts);
-    void moveElement(std::vector<Trait> &arr, size_t fromIndex, size_t toIndex);
+    void ProcessNFTs(int start_index, int end_index, std::vector<NFT_Metadata> &_generatedNFTs);
+    void SaveNTFSInParrallel(std::vector<NFT_Metadata> &_generatedNFTs);
+    void MoveElement(std::vector<Trait> &arr, size_t fromIndex, size_t toIndex);
 
 private:
-    std::atomic<int> progress_counter{0};
+    std::atomic<int> _progressCounter{0};
     Exceptions _exceptions;
-    std::string _generated_nfts_directory;
-    std::string _traits_directories_root_path;
-    nftgen::NFT_Metadata _nft_template_metadata;
-    std::vector<nftgen::NFT_Metadata> _generated_nfts_metadatas;
-    std::unordered_set<size_t> _nfts_hashes;
-    std::unordered_map<std::pair<int /*trait_directory_id*/, int /*trait_id*/>, size_t, boost::hash<std::pair<int, int>>> _nfts_grouped_traits;
-    std::mutex console_mutex;
+    std::string _generatedNFTsDirectory;
+    std::string _traitsDirectoriesRootPath;
+    nftgen::NFT_Metadata _nftTemplateMetadata;
+    std::vector<nftgen::NFT_Metadata> _generatedNFTsMetadatas;
+    std::unordered_set<size_t> _nftsHashes;
+    std::unordered_map<std::pair<int /*trait_directory_id*/, int /*trait_id*/>, size_t, boost::hash<std::pair<int, int>>> _groupedNFTTraits;
+    std::mutex consoleMutex;
 };
 }  // namespace nftgen

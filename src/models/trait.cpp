@@ -7,40 +7,40 @@
 
 namespace nftgen
 {
-void Trait::set_generation_chance(double generationChance)
+void Trait::SetGenerationChance(double generationChance)
 {
-    _generation_chance = generationChance;
+    _generationChance = generationChance;
 }
 
-const double Trait::get_generation_chance [[nodiscard]] () const
+[[nodiscard]] const double Trait::GetGenerationChance() const
 {
-    return _generation_chance;
+    return _generationChance;
 }
 
-void Trait::set_gen_order_trait_directory_id(int id)
+void Trait::SetDirectoryGenerationOrderID(int id)
 {
-    _gen_order_trait_folder_id = id;
+    _directoryGenerationOrderID = id;
 }
 
-void Trait::set_trait_directory_id(int id)
+void Trait::SetDirectoryID(int id)
 {
-    _trait_folder_id = id;
+    _directoryID = id;
 }
 
-const int Trait::get_trait_id [[nodiscard]] () const
+[[nodiscard]] const int Trait::GetTraitID() const
 {
-    return _trait_id;
+    return _traitID;
 }
 
-const cv::Mat &Trait::get_matrix [[nodiscard]] () const
+[[nodiscard]] const cv::Mat &Trait::GetMatrix() const
 {
-    return _image_matrix;
+    return _imageMatrix;
 }
 
-std::pair<Trait*, GenerationResult> Trait::get_next_trait(int trait_directory_id, bool doNotApplyGenerationChances)
+std::pair<Trait *, GenerationResult> Trait::GetNextTrait(int directoryID, bool doNotApplyGenerationChances)
 {
-    auto &trait_directory = generator::_traits_directories[trait_directory_id];
-    auto &current_folder_traits = trait_directory.get_traits();
+    auto &trait_directory = generator::_traitsDirectories[directoryID];
+    auto &current_folder_traits = trait_directory.GetTraits();
 
     // start check if gen chance for folder
     std::random_device rd_trait_directory;
@@ -48,9 +48,9 @@ std::pair<Trait*, GenerationResult> Trait::get_next_trait(int trait_directory_id
     std::uniform_real_distribution<float> uniform_dis_trait_directory(0.0f, 1.0f);
 
     float rand_value_trait_folder = uniform_dis_trait_directory(mt_gen_trait_directory);
-    if (rand_value_trait_folder > trait_directory.get_generation_chance() && !doNotApplyGenerationChances)
+    if (rand_value_trait_folder > trait_directory.GetGenerationChance() && !doNotApplyGenerationChances)
     {
-        //std::cout << "Skipping directory ID: " << trait_directory_id << std::endl;
+        // std::cout << "Skipping directory ID: " << trait_directory_id << std::endl;
         return std::make_pair(nullptr, SkippedFolder);
     }
     // end check if gen chance for folder
@@ -62,12 +62,12 @@ std::pair<Trait*, GenerationResult> Trait::get_next_trait(int trait_directory_id
 
     float random_value = uniform_dis_trait(mt_gen_trait);
 
-    Trait* next_trait = nullptr;
+    Trait *next_trait = nullptr;
 
     float cumulative_probability = 0.0f;
     for (size_t i = 0; i < current_folder_traits.size(); ++i)
     {
-        cumulative_probability += current_folder_traits[i].get_generation_chance();
+        cumulative_probability += current_folder_traits[i].GetGenerationChance();
         if (random_value <= cumulative_probability)
         {
             next_trait = &current_folder_traits[i];
@@ -79,67 +79,62 @@ std::pair<Trait*, GenerationResult> Trait::get_next_trait(int trait_directory_id
     return std::make_pair(next_trait, SuccessfullyGenerated);
 }
 
-Rarities Trait::get_rarity [[nodiscard]] () const
+[[nodiscard]] Rarities Trait::GetRarity() const
 {
     return _rarity;
 }
 
-int Trait::get_gen_order_trait_directory_id [[nodiscard]] () const
+[[nodiscard]] int Trait::GetDirectoryGenerationOrderID() const
 {
-    return _gen_order_trait_folder_id;
+    return _directoryGenerationOrderID;
 }
 
-int Trait::get_trait_directory_id [[nodiscard]] () const
+[[nodiscard]] int Trait::GetDirectoryID() const
 {
-    return _trait_folder_id;
+    return _directoryID;
 }
 
-void Trait::set_trait_id(int trait_id)
+void Trait::SetTraitID(int trait_id)
 {
-    _trait_id = trait_id;
+    _traitID = trait_id;
 }
 
-void Trait::set_matrix(cv::Mat &image_matrix)
+void Trait::SetMatrix(cv::Mat &image_matrix)
 {
-    _image_matrix = image_matrix;
+    _imageMatrix = image_matrix;
 }
 
-void Trait::set_rarity(const Rarities rarity)
+void Trait::SetRarity(const Rarities rarity)
 {
     _rarity = rarity;
 }
 
-void Trait::set_path(const std::string &path)
+void Trait::SetPath(const std::string &path)
 {
     _path = path;
 }
 
-void Trait::set_filename(const std::string &filename)
+void Trait::SetFilename(const std::string &filename)
 {
     _filename = filename;
 }
 
-void Trait::set_directory_name(const std::string &directory_name)
+void Trait::GetDirectoryName(const std::string &directory_name)
 {
     _directory_name = directory_name;
 }
 
-//bool Trait::meets_all_exceptions(const Exceptions &exceptions)
-//{
-//    return true;
-//}
-
-std::string_view Trait::get_path [[nodiscard]] () const
+[[nodiscard]] std::string_view Trait::GetPath() const
 {
     return _path;
 }
 
-std::string_view Trait::get_filename [[nodiscard]] () const
+[[nodiscard]] std::string_view Trait::GetFilename() const
 {
     return _filename;
 }
 
-std::string_view Trait::get_directory_name [[nodiscard]] () const
+[[nodiscard]] std::string_view Trait::SetDirectoryName() const
 {
     return _directory_name;
 }

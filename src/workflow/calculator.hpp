@@ -7,79 +7,75 @@ namespace nftgen
 {
 class calculator
 {
-  public:
-    static void set_equal_generation_chances(std::vector<Trait>& traits)
+public:
+    static void SetEqualGenerationChances(std::vector<Trait> &traits)
     {
         size_t count = traits.size();
         if (count == 0)
             return;
 
         // Calculate the total defined generation chance
-        double total_defined_chance = 0.0;
+        double totalDefinedChance = 0.0;
         for (const auto &trait : traits)
         {
-            total_defined_chance += trait.get_generation_chance();
+            totalDefinedChance += trait.GetGenerationChance();
         }
 
         // Ensure the total defined chance does not exceed 1
-        if (total_defined_chance > 1.0)
+        if (totalDefinedChance > 1.0)
         {
             throw std::runtime_error("Total defined generation chance exceeds 100%.");
         }
 
         // Calculate remaining chance to be equally distributed
-        double remaining_chance = 1.0 - total_defined_chance;
+        double remainingChance = 1.0 - totalDefinedChance;
 
         // Count traits with undefined (0) generation chance
-        size_t undefined_count = 0;
+        size_t undefinedCount = 0;
         for (const auto &trait : traits)
         {
-            if (trait.get_generation_chance() == 0.0)
+            if (trait.GetGenerationChance() == 0.0)
             {
-                ++undefined_count;
+                ++undefinedCount;
             }
         }
 
         // If no traits need updating, return early
-        if (undefined_count == 0)
+        if (undefinedCount == 0)
             return;
 
         // Distribute remaining chance equally among traits with undefined chance
-        double equal_chance = remaining_chance / undefined_count;
+        double equalChance = remainingChance / undefinedCount;
         for (auto &trait : traits)
         {
-            if (trait.get_generation_chance() == 0.0)
+            if (trait.GetGenerationChance() == 0.0)
             {
-                trait.set_generation_chance(equal_chance);
+                trait.SetGenerationChance(equalChance);
             }
         }
     }
 
-    static void reapply_generation_chances_by_exception()
+    static void SetFullGenerationChances(std::vector<TraitDirectory> &traitsDirectories)
     {
-    }
-
-    static void set_full_generation_chances(std::vector<TraitDirectory> &traits_directories)
-    {
-        for (auto &trait_directory : traits_directories)
+        for (auto &traitDirectory : traitsDirectories)
         {
-            if (trait_directory.get_generation_chance() == 0.00)
-                trait_directory.set_generation_chance(1);
+            if (traitDirectory.GetGenerationChance() == 0.00)
+                traitDirectory.SetGenerationChance(1);
         }
     }
 
-    static void set_equal_geneartion_chances(std::vector<TraitDirectory> &traits_directories)
+    static void SetEqualGenerationChances(std::vector<TraitDirectory> &traitsDirectories)
     {
-        size_t count = traits_directories.size();
+        size_t count = traitsDirectories.size();
         if (count == 0)
             return;
 
         double chance = 1.0 / count;
 
-        for (auto &trait_directory : traits_directories)
+        for (auto &traitDirectory : traitsDirectories)
         {
-            if (trait_directory.get_generation_chance() == 0.00)
-                trait_directory.set_generation_chance(chance);
+            if (traitDirectory.GetGenerationChance() == 0.00)
+                traitDirectory.SetGenerationChance(chance);
         }
     }
 };

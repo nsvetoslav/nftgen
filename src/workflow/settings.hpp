@@ -16,20 +16,20 @@ public:
     settings &operator=(const settings &) = delete;
 
 public:
-    static settings &get_instance [[nodiscard]] ();
+    static settings &GetInstance [[nodiscard]] ();
 
 private:
     settings() = default;
 
 public:
     bool load();
-    std::string get_assets_directory [[nodiscard]] ();
-    std::string get_working_directory [[nodiscard]] ();
-    std::string get_generated_nfts_directory [[nodiscard]] ();
-    std::string get_template_file [[nodiscard]] ();
+    std::string GetAssetsDirectory [[nodiscard]] ();
+    std::string GetWorkingDirectory [[nodiscard]] ();
+    std::string GetGeneratedNFTsDirectory [[nodiscard]] ();
+    std::string GetTemplateFile [[nodiscard]] ();
 
 private:
-    static std::string _settings_path;
-    static json _settings_data;
+    static std::string _settingsPath;
+    static json _settingsData;
 };
 }  // namespace nftgen

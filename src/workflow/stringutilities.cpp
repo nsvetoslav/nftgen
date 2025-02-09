@@ -6,38 +6,36 @@ namespace nftgen
 namespace utilities
 {
 
-std::string stringutilities::clean_prefix(const std::string &input)
+std::string stringutilities::ClearPrefix(const std::string &input)
 {
     std::string name = input;
 
-    // Find the position of the first dot
     size_t pos = input.find('.');
 
-    // If a dot is found, extract the substring starting after it
     if (pos != std::string::npos)
     {
-        name = name.substr(pos + 1);  // Skip the dot
+        name = name.substr(pos + 1);
     }
 
     return name;
 }
 
-std::string stringutilities::clean_postfix(const std::string &input)
+std::string stringutilities::ClearPostfix(const std::string &input)
 {
     std::string result = input;
 
-    trim(result);
+    Trim(result);
 
-    size_t last_dot = result.rfind('.');
-    if (last_dot != std::string::npos)
+    size_t lastDot = result.rfind('.');
+    if (lastDot != std::string::npos)
     {
-        result.erase(last_dot);
+        result.erase(lastDot);
     }
 
     return result;
 }
 
-void stringutilities::trim(std::string &str)
+void stringutilities::Trim(std::string &str)
 {
     str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) { return !std::isspace(ch); }));
 

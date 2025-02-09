@@ -12,32 +12,32 @@ class NotGenerateDirectoryWithDirectoryExceptionProcessor : public BaseTraitDire
 public:
     NotGenerateDirectoryWithDirectoryExceptionProcessor(NFT_Metadata &nftMetadata,
                                                         const Trait &generated_trait,
-                                                        const TraitDirectoryException &trait_directory_exception) noexcept
+                                                        const TraitDirectoryException &traitDirectoryException) noexcept
         :
         BaseTraitDirectoryExceptionProcessor(nftMetadata,
                                              generated_trait,
-                                             trait_directory_exception)
+                                             traitDirectoryException)
     {
     }
 
     virtual ~NotGenerateDirectoryWithDirectoryExceptionProcessor() noexcept = default;
 
 protected:
-    [[nodiscard]] virtual inline bool CheckMetadataTrait(const Trait &metadata_trait) override
+    [[nodiscard]] virtual inline bool CheckMetadataTrait(const Trait &metadataTrait) override
     {
-        const auto &trait_exception = GetTraitDirectoryException();
-        const auto &current_generated_trait = GetCurrentGeneratedTrait();
-        const auto &generated_trait_dir_name = current_generated_trait.get_directory_name();
+        const auto &traitDirectoryException = GetTraitDirectoryException();
+        const auto &currentGeneratedTrait = GetCurrentGeneratedTrait();
+        const auto &generatedTraitDirectory = currentGeneratedTrait.SetDirectoryName();
 
-        if (generated_trait_dir_name.find(trait_exception.apply_to_directory) != std::string::npos &&
-            metadata_trait.get_directory_name().find(trait_exception.apply_from_directory) != std::string::npos)
+        if (generatedTraitDirectory.find(traitDirectoryException.targetDirectory) != std::string::npos &&
+            metadataTrait.SetDirectoryName().find(traitDirectoryException.sourceDirectory) != std::string::npos)
         {
             SetContinueToNextDirectory(true);
             return false;
         }
 
-        if (generated_trait_dir_name.find(trait_exception.apply_from_directory) != std::string::npos &&
-            metadata_trait.get_directory_name().find(trait_exception.apply_to_directory) != std::string::npos)
+        if (generatedTraitDirectory.find(traitDirectoryException.sourceDirectory) != std::string::npos &&
+            metadataTrait.SetDirectoryName().find(traitDirectoryException.targetDirectory) != std::string::npos)
         {
             SetContinueToNextDirectory(true);
             return false;

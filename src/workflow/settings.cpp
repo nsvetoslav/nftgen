@@ -3,10 +3,10 @@
 namespace nftgen
 {
 
-std::string settings::_settings_path = "settings.json";
-json settings::_settings_data;
+std::string settings::_settingsPath = "settings.json";
+json settings::_settingsData;
 
-settings &settings::get_instance [[nodiscard]] ()
+settings &settings::GetInstance [[nodiscard]] ()
 {
     static settings instance;
     return instance;
@@ -14,16 +14,16 @@ settings &settings::get_instance [[nodiscard]] ()
 
 bool settings::load()
 {
-    std::ifstream inputFile(_settings_path);
+    std::ifstream inputFile(_settingsPath);
     if (!inputFile.is_open())
     {
-        std::cerr << "Could not open the settings file: " << _settings_path << std::endl;
+        std::cerr << "Could not open the settings file: " << _settingsPath << std::endl;
         return false;
     }
 
     try
     {
-        inputFile >> _settings_data;
+        inputFile >> _settingsData;
     }
     catch (const json::parse_error &e)
     {
@@ -35,23 +35,23 @@ bool settings::load()
     return true;
 }
 
-std::string settings::get_assets_directory [[nodiscard]] ()
+std::string settings::GetAssetsDirectory [[nodiscard]] ()
 {
-    return _settings_data.value("assets_directory", "");
+    return _settingsData.value("assets_directory", "");
 }
 
-std::string settings::get_working_directory [[nodiscard]] ()
+std::string settings::GetWorkingDirectory [[nodiscard]] ()
 {
-    return _settings_data.value("working_directory", "");
+    return _settingsData.value("working_directory", "");
 }
 
-std::string settings::get_generated_nfts_directory [[nodiscard]] ()
+std::string settings::GetGeneratedNFTsDirectory [[nodiscard]] ()
 {
-    return _settings_data.value("generated_nfts_directory", "");
+    return _settingsData.value("generated_nfts_directory", "");
 }
 
-std::string settings::get_template_file [[nodiscard]] ()
+std::string settings::GetTemplateFile [[nodiscard]] ()
 {
-    return _settings_data.value("nfts_template_directory", "");
+    return _settingsData.value("nfts_template_directory", "");
 }
 }  // namespace nftgen

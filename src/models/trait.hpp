@@ -33,48 +33,45 @@ enum GenerationResult
 struct Trait
 {
 public:
-    void set_generation_chance(double generation_chance);
-    const double get_generation_chance [[nodiscard]] () const;
+    void SetGenerationChance(double generation_chance);
+    [[nodiscard]] const double GetGenerationChance() const;
 
-    void set_gen_order_trait_directory_id(int trait_folder_id);
-    int get_gen_order_trait_directory_id [[nodiscard]] () const;
+    void SetDirectoryGenerationOrderID(int directoryID);
+    [[nodiscard]] int GetDirectoryGenerationOrderID() const;
 
-    void set_trait_directory_id(int trait_folder_id);
-    int get_trait_directory_id [[nodiscard]] () const;
+    void SetDirectoryID(int directoryID);
+    [[nodiscard]] int GetDirectoryID() const;
 
-    void set_trait_id(int trait_id);
-    const int get_trait_id [[nodiscard]] () const;
+    void SetTraitID(int trait_id);
+    [[nodiscard]] const int GetTraitID() const;
 
-    const cv::Mat &get_matrix [[nodiscard]] () const;
-    void set_matrix(cv::Mat &matrix);
+    [[nodiscard]] const cv::Mat &GetMatrix() const;
+    void SetMatrix(cv::Mat &matrix);
 
-    void set_rarity(const Rarities rarity);
-    Rarities get_rarity [[nodiscard]] () const;
+    void SetRarity(const Rarities rarity);
+    [[nodiscard]] Rarities GetRarity() const;
 
-    std::string_view get_path [[nodiscard]] () const;
-    void set_path(const std::string &path);
+    [[nodiscard]] std::string_view GetPath() const;
+    void SetPath(const std::string &path);
 
-    std::string_view get_filename [[nodiscard]] () const;
-    void set_filename(const std::string &filename);
+    [[nodiscard]] std::string_view GetFilename() const;
+    void SetFilename(const std::string &filename);
 
-    std::string_view get_directory_name [[nodiscard]] () const;
-    void set_directory_name(const std::string &directory_name);
+    [[nodiscard]] std::string_view SetDirectoryName() const;
+    void GetDirectoryName(const std::string &directory_name);
 
-    static std::pair<Trait *, GenerationResult> get_next_trait [[nodiscard]] (int trait_folder_id, bool doNotApplyGenerationChances = false);
-
-    // bool meets_all_exceptions(const Exceptions& exceptions);
+    [[nodiscard]] static std::pair<Trait *, GenerationResult> GetNextTrait(int directoryID, bool doNotApplyGenerationChances = false);
 
 private:
-    int _trait_id{};
+    int _traitID{};
     std::string _path;
     std::string _filename;
     std::string _directory_name;
-    double _generation_chance{};
-    bool _is_excluded{};
-    int _gen_order_trait_folder_id{};
-    int _trait_folder_id{};
+    double _generationChance{};
+    int _directoryGenerationOrderID{};
+    int _directoryID{};
     Rarities _rarity{};
-    cv::Mat _image_matrix;
+    cv::Mat _imageMatrix;
 };
 
 }  // namespace nftgen

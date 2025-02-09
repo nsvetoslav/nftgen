@@ -12,31 +12,35 @@ namespace nftgen
 struct TraitDirectory
 {
 public:
-    void set_path(std::string path);
-    std::string_view get_path [[nodiscard]] ();
+    void SetPath(std::string path);
+    [[nodiscard]] std::string_view GetPath();
 
-    std::string get_directory_name [[nodiscard]] ();
-    void set_directory_name(std::string directory_name);
+    [[nodiscard]] std::string GetDirectoryName();
+    void SetDirectoryName(std::string directory_name);
 
-    void set_traits(std::vector<std::pair<std::string /*path*/, std::string> /*file_name*/> traits, std::string direcotry_name, int &gen_directory_index, int &directory_index);
-    std::vector<nftgen::Trait> &get_traits [[nodiscard]] ();
+    void SetTraits(std::vector<std::pair<std::string /*path*/, std::string> /*file_name*/> traits,
+                   std::string directoryName,
+                   int &directoryGenerationID,
+                   int &directoryID);
 
-    const int &get_id [[nodiscard]] () const;
-    void set_id(int id);
+    [[nodiscard]] std::vector<nftgen::Trait> &GetTraits();
 
-    const double get_generation_chance [[nodiscard]] () const;
-    void set_generation_chance(double generation_chance);
+    [[nodiscard]] const int &GetID() const;
+    void SetID(int id);
 
-    [[nodiscard]] int get_gen_order() const;
-    void set_gen_order(int gen_order);
+    [[nodiscard]] const double GetGenerationChance() const;
+    void SetGenerationChance(double generationChance);
+
+    [[nodiscard]] int GetGenerationOrder() const;
+    void SetGenerationOrder(int generationOrder);
 
 private:
     std::string _path;
-    std::string _directory_name;
+    std::string _directoryName;
     std::vector<nftgen::Trait> _traits{};
-    double _generation_chance{};
-    int _generation_order{};
-    int _id{};    
+    double _generationChance{};
+    int _generationOrder{};
+    int _id{};
 };
 
 }  // namespace nftgen

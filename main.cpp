@@ -4,10 +4,10 @@
 
  int main()
 {
-    if (!nftgen::settings::get_instance().load())
+    if (!nftgen::settings::GetInstance().load())
         return -1;
 
-    nftgen::generator generator(nftgen::settings::get_instance().get_assets_directory());
+    nftgen::generator generator(nftgen::settings::GetInstance().GetAssetsDirectory());
 
     const auto& generation_result = generator.generate(1000);
 

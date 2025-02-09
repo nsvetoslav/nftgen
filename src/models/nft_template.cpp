@@ -159,7 +159,7 @@ std::vector<Trait> &NFT_Metadata::get_traits()
 
 void NFT_Metadata::sort_traits()
 {
-    std::sort(_traits.begin(), _traits.end(), [](auto &a, auto &b) { return a.get_gen_order_trait_directory_id() < b.get_gen_order_trait_directory_id(); });
+    std::sort(_traits.begin(), _traits.end(), [](auto &a, auto &b) { return a.GetDirectoryGenerationOrderID() < b.GetDirectoryGenerationOrderID(); });
 }
 
 void NFT_Metadata::add_trait(Trait &trait)
@@ -173,7 +173,7 @@ size_t NFT_Metadata::generate_traits_hash() const
     std::size_t hash = 0;
     for (const auto &trait : _traits)
     {
-        boost::hash_combine(hash, trait.get_trait_id());
+        boost::hash_combine(hash, trait.GetTraitID());
     }
     return hash;
 }
@@ -181,8 +181,8 @@ size_t NFT_Metadata::generate_traits_hash() const
 void NFT_Metadata::add_attribute_by_trait(const Trait &trait)
 {
     Attribute attribute;
-    attribute.trait_type = trait.get_directory_name();
-    attribute.value = trait.get_filename();
+    attribute.trait_type = trait.SetDirectoryName();
+    attribute.value = trait.GetFilename();
 
     attributes.push_back(attribute);
 }
