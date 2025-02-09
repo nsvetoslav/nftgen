@@ -30,7 +30,6 @@ std::vector<TraitDirectory> generator::_traits_directories{};
 
     if (!std::filesystem::exists(root_path) && !std::filesystem::is_directory(root_path))
     {
-        // logger.log(!fileManager.exists(), _traitsDirectory);
         return false;
     }
 
@@ -43,9 +42,6 @@ std::vector<TraitDirectory> generator::_traits_directories{};
         auto &trait_directory_path_pair = trait_directory_paths_pairs[trait_directory_path_index];
         const auto &trait_directory_path = trait_directory_path_pair.first;
         const auto &trait_directory_folder_name = trait_directory_path_pair.second;
-
-        // set traitFoldersExceptions
-        //
 
         TraitDirectory trait_directory;
         trait_directory.set_path(trait_directory_path);
@@ -70,21 +66,16 @@ std::vector<TraitDirectory> generator::_traits_directories{};
             trait_directory.set_generation_chance(0.42);
         }
 
-        // All the trait files paths in a traitDirectory
         std::vector<std::pair<std::string /*path*/, std::string> /*fileName*/> traits_paths;
         fileManager.get_file_paths_in_directory(trait_directory_path_pair.first, traits_paths);
 
-        // loadTraitsExceptions
-        //
         trait_directory.set_traits(traits_paths, trait_directory_folder_name, trait_directory_path_index, trait_directory_path_index);
 
-        // mem moving traitFolder in _traitsDirectories
         _traits_directories.push_back(trait_directory);
     }
 
     nftgen::calculator::set_full_generation_chances(_traits_directories);
 
-    // Assign generation order based on sorted positions
     for (size_t i = 0; i < _traits_directories.size(); ++i)
     {
         for (auto &trait : _traits_directories.at(i).get_traits())
@@ -93,7 +84,6 @@ std::vector<TraitDirectory> generator::_traits_directories{};
         _traits_directories[i].set_gen_order(static_cast<int>(i));
     }
 
-    // Sort by traits size
     std::sort(_traits_directories.begin(), _traits_directories.end(), [](TraitDirectory &dir1, TraitDirectory &dir2) {
         if (dir1.get_generation_chance() != dir2.get_generation_chance())
         {
@@ -134,30 +124,6 @@ void generator::create_gen_directory(std::string_view dir) const
 
 void nftgen::generator::CheckTraitDirectoryExceotions(NFT_Metadata &nft_metadata, Trait &current_trait, bool &bContinueNextDir, bool &bContinueNextTrait)
 {
-    // for (auto &metadataTrait : nft_metadata.get_traits())
-    //{
-    //     for (auto &exception : _exceptions.traitDirectoriesExceptions)
-    //     {
-    //         if (exception.apply_from_directory == metadataTrait.get_filename() ||
-    //             exception.apply_to_directory == metadataTrait.get_directory_name())
-    //         {
-    //             std::unique_ptr<nftgen::typedexceptions::IExceptionProcessor> exception_processor =
-    //                 nftgen::typedexceptions::TraitDirectoriesExceptionsFactory::Get(nft_metadata, exception, current_trait);
-
-    //            if (exception_processor.get() == nullptr)
-    //                continue;
-
-    //            if (!exception_processor->MeetsGenerationConditions())
-    //            {
-    //                bContinueNextDir = exception_processor->ContinueToNextDirectory();
-    //                bContinueNextTrait = exception_processor->ContinueToNextTrait();
-
-    //                return;
-    //            }
-    //        }
-    //    }
-    //}
-
     std::find_if(_exceptions.traitDirectoriesExceptions.begin(),
                  _exceptions.traitDirectoriesExceptions.end(),
                  [&nft_metadata,
@@ -192,11 +158,11 @@ static bool haveCommonElement(const std::vector<std::string> &arr1, const std::v
         {
             if (str1.find(str2) != std::string::npos || str2.find(str1) != std::string::npos)
             {
-                return true;  // Found a partial match
+                return true;
             }
         }
     }
-    return false;  // No common elements found
+    return false;
 }
 
 void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT_Metadata &nftMetadata, bool &continueToNextTrait)
@@ -214,9 +180,6 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
             if (metadataTrait.get_filename().find(traitException.apply_from_trait) == std::string::npos)
                 continue;
 
-            const std::string &currentExceptionTargetDirectory = traitException.apply_from_trait_dir;
-            bool bHasAnotherExceptionWithSameTargetDirectory = false;
-
             for (const auto &traitExceptionInternal : _exceptions.traitsExceptions)
             {
                 if (traitExceptionInternal.exceptionType != ExceptionsTypes::GenerateTraitOnlyWithTraits)
@@ -228,16 +191,16 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
                 if (traitExceptionInternal.apply_from_trait == traitException.apply_from_trait)
                     continue;
 
-                if (traitException.apply_to_directory == traitExceptionInternal.apply_to_directory)
+                if (traitException.apply_to_directory != traitExceptionInternal.apply_to_directory)
+                    continue;
+
+                if (currentGeneratedTrait.get_directory_name().find(traitException.apply_from_trait_dir) == std::string::npos)
+                    continue;
+
+                if (currentGeneratedTrait.get_filename().find(traitException.apply_from_trait) != std::string::npos)
                 {
-                    if (currentGeneratedTrait.get_directory_name().find(traitException.apply_from_trait_dir) != std::string::npos)
-                    {
-                        if (currentGeneratedTrait.get_filename().find(traitException.apply_from_trait) != std::string::npos)
-                        {
-                            continueToNextTrait = true;
-                            break;
-                        }
-                    }
+                    continueToNextTrait = true;
+                    break;
                 }
             }
 
@@ -273,76 +236,49 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
                 if (traitExceptionInternal.apply_to_directory.find(traitException.apply_to_directory) == std::string::npos)
                     continue;
 
-                if (currentGeneratedTrait.get_directory_name().find(traitExceptionInternal.apply_from_trait_dir) != std::string::npos)
+                if (currentGeneratedTrait.get_directory_name().find(traitExceptionInternal.apply_from_trait_dir) == std::string::npos)
+                    continue;
+
+                if (currentGeneratedTrait.get_directory_name().find(traitExceptionInternal.apply_from_trait_dir) == std::string::npos)
+                    continue;
+
+                if (currentGeneratedTrait.get_filename().find(traitExceptionInternal.apply_from_trait) == std::string::npos)
+                    continue;
+
+                const auto &it =
+                    std::find_if(nftMetadata.get_traits().begin(),
+                                 nftMetadata.get_traits().end(),
+                                 [&](Trait &trait) {
+                                     if (trait.get_directory_name().find(traitExceptionInternal.apply_from_trait_dir) != std::string::npos)
+                                     {
+                                         for (const auto &exceptionedTraitInternal : traitExceptionInternal.apply_with_traits.value())
+                                         {
+                                             if (trait.get_filename().find(exceptionedTraitInternal) != std::string::npos)
+                                                 return true;
+                                         }
+                                     }
+
+                                     return false;
+                                 });
+
+                if (it != nftMetadata.get_traits().end())
+                    continue;
+
+                if (!haveCommonElement(traitExceptionInternal.apply_with_traits.value(),
+                                       traitException.apply_with_traits.value()))
                 {
-                    if (currentGeneratedTrait.get_directory_name().find(traitExceptionInternal.apply_from_trait_dir) != std::string::npos)
-                    {
-                        if (currentGeneratedTrait.get_filename().find(traitExceptionInternal.apply_from_trait) != std::string::npos)
-                        {
-                            traitExceptionInternal.apply_to_directory;  // -- Base
-                            traitExceptionInternal.apply_with_traits;   // -- Silver Base
-
-                            const auto &it = std::find_if(nftMetadata.get_traits().begin(),
-                                                          nftMetadata.get_traits().end(),
-                                                          [&](Trait &trait) {
-                                                              if (trait.get_directory_name().find(traitExceptionInternal.apply_from_trait_dir) != std::string::npos)
-                                                              {
-                                                                  for (const auto &exceptionedTraitInternal : traitExceptionInternal.apply_with_traits.value())
-                                                                  {
-                                                                      if (trait.get_filename().find(exceptionedTraitInternal) != std::string::npos)
-                                                                          return true;
-                                                                  }
-                                                              }
-
-                                                              return false;
-                                                          });
-
-                            if (it != nftMetadata.get_traits().end())
-                                continue;
-
-                            if (!haveCommonElement(traitExceptionInternal.apply_with_traits.value(),
-                                                   traitException.apply_with_traits.value()))
-                            {
-                                continueToNextTrait = true;
-                                break;
-                            }
-                        }
-                    }
+                    continueToNextTrait = true;
+                    break;
                 }
             }
+
             if (continueToNextTrait)
                 break;
         }
+
         if (continueToNextTrait)
             break;
     }
-
-    /* for (const auto &traitException : _exceptions.traitsExceptions)
-      {
-          if (traitException.exceptionType != ExceptionsTypes::GenerateTraitOnlyWithTraits)
-              continue;
-
-          if (currentGeneratedTrait.get_directory_name().find(traitException.apply_from_trait_dir) == std::string::npos)
-              continue;
-
-          for (const auto &metadataTrait : nftMetadata.get_traits())
-          {
-              if (metadataTrait.get_directory_name().find(traitException.apply_to_directory) == std::string::npos)
-                  continue;
-
-              if (std::find_if(traitException.apply_with_traits->begin(),
-                               traitException.apply_with_traits->end(),
-                               [&](std::string targetTraits) {
-                                   return false;
-                               }) != traitException.apply_with_traits->end())
-              {
-                  continueToNextTrait = true;
-                  break;
-              }
-          }
-
-          if (continueToNextTrait)
-              break;*/
 }
 
 void nftgen::generator::CheckTraitExceotions(NFT_Metadata &nft_metadata, Trait &current_trait, bool &bContinueNextDir, bool &bContinueNextTrait)
@@ -372,28 +308,6 @@ void nftgen::generator::CheckTraitExceotions(NFT_Metadata &nft_metadata, Trait &
             }
         }
     }
-
-    /*   auto &exceptions = _exceptions;
-       std::find_if(_exceptions.traitsExceptions.begin(),
-                    _exceptions.traitsExceptions.end(),
-                    [&nft_metadata, &bContinueNextDir, &bContinueNextTrait, &current_trait, &exceptions](
-                        const TraitException &traitException) {
-                        std::unique_ptr<nftgen::typedexceptions::IExceptionProcessor> exception_processor =
-                            nftgen::typedexceptions::TraitExceptionsFactory::Get(nft_metadata, traitException, current_trait, exceptions);
-
-                        if (exception_processor.get() == nullptr)
-                            return false;
-
-                        if (!exception_processor->MeetsGenerationConditions())
-                        {
-                            bContinueNextDir = exception_processor->ContinueToNextDirectory();
-                            bContinueNextTrait = exception_processor->ContinueToNextTrait();
-
-                            return true;
-                        }
-
-                        return false;
-                    });*/
 }
 
 nftgen::generator::generator(std::string trait_directories_root_path) :
@@ -417,17 +331,6 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
             return false;
         }
-
-        // json exceptions_json;
-        // std::string exceptions_file_path = settings::get_instance().get_working_directory() + "\\exceptions.json";
-        // std::ifstream nft_exceptions_json_file(exceptions_file_path);
-        // if (!nft_exceptions_json_file.is_open())
-        //{
-        //     std::cerr << "Could not open the templateNFTMetadata file!" << std::endl;
-        //     return false;
-        // }
-
-        // nft_exceptions_json_file >> exceptions_json;
 
         if (!load_directories())
             return false;
@@ -467,7 +370,6 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             ApplyFromTraitDirectory("Legacy"),
             RenderAfter("Eyes"),
             ExceptionsTypes::RenderAfter));
-        // -- For last generation
 
         // - If any variation of the "Cap" Trait is generated no "Earings" or "Clothes" with back pieces can be generated.
         _exceptions.traitsExceptions.push_back(TraitException(ApplyFromTrait("Cap"),
@@ -676,33 +578,26 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             for (const auto &trait : _traits_directories)
             {
                 if (trait.get_generation_chance() != 1.00)
-                {  // Has a valid generation chance
+                {
                     has_chance.push_back(trait);
                 }
                 else
-                {  // No set generation chance
+                {
                     no_chance.push_back(trait);
                 }
             }
 
-            // Sort the elements that have a generation chance in ascending order
             std::sort(has_chance.begin(), has_chance.end(), [](const TraitDirectory &a, const TraitDirectory &b) {
                 return a.get_generation_chance() < b.get_generation_chance();
             });
 
-            // Shuffle the remaining elements
             std::random_device rd;
             std::mt19937 g(rd());
             std::shuffle(no_chance.begin(), no_chance.end(), g);
 
-            // Merge them back: sorted elements first, then shuffled elements
             _traits_directories.clear();
             _traits_directories.insert(_traits_directories.end(), has_chance.begin(), has_chance.end());
             _traits_directories.insert(_traits_directories.end(), no_chance.begin(), no_chance.end());
-
-            /* std::random_device rd;
-              std::mt19937 g(rd());
-              std::shuffle(_traits_directories.begin(), _traits_directories.end(), g);*/
 
             generate_single_nft(generated_nfts_count);
             std::cout << "Generating "
@@ -713,18 +608,8 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             system("cls");
         }
 
-        //// Sort by traits size
-        // std::sort(_traits_directories.begin(), _traits_directories.end(), [](TraitDirectory &dir1, TraitDirectory &dir2) {
-        //     if (dir1.get_generation_chance() != dir2.get_generation_chance())
-        //     {
-        //         return dir1.get_generation_chance() < dir2.get_generation_chance();
-        //     }
-        //     return dir1.get_traits().size() > dir2.get_traits().size();
-        // });
-
         std::vector<std::pair<std::pair<int, int>, size_t>> sorted_traits(_nfts_grouped_traits.begin(), _nfts_grouped_traits.end());
 
-        // Step 2: Sort the vector by traitFolderID
         std::sort(sorted_traits.begin(), sorted_traits.end(), [](const auto &a, const auto &b) {
             return a.first.first < b.first.first;  // Sort by traitFolderID
         });
@@ -738,10 +623,8 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             return 1;
         }
 
-        // Use semicolon (;) as a delimiter for better Excel compatibility
         file << "TraitFolderID;TraitID;Count;GenerationChance;\n";
 
-        // Step 3: Write the sorted traits to CSV
         for (const auto &entry : sorted_traits)
         {
             int trait_directory_id = entry.first.first;  // Folder ID
@@ -763,8 +646,6 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             }
 
             const double generation_chance = (static_cast<double>(taritGenerationCount) / count) * 100;
-
-            // 100 / 12 * 11
 
             file
                 << directory->get_directory_name()
@@ -798,7 +679,6 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
     }
     catch (const std::exception &exception)
     {
-        // logger.log(exception);
         return false;
     }
 
@@ -940,24 +820,18 @@ void generator::process_nfts(int start_index, int end_index, std::vector<NFT_Met
             return exception.exceptionType == ExceptionsTypes::RenderAfter;
         });
 
-        // Step 2: Iterate through matching exceptions and find their index in `_exceptions.traitsExceptions`
         for (auto &it : matchingExceptions)
         {
-            // Find the iterator for `traitExcRenderAfter` inside `_exceptions.traitsExceptions`
             const auto foundTrait = std::find_if(generated_nft.get_traits().begin(), generated_nft.get_traits().end(), [&it](Trait &trait) {
                 return trait.get_filename() == it.apply_from_trait;
             });
 
-            // Ensure `traitExcRenderAfterIt` is valid
             if (foundTrait != generated_nft.get_traits().end())
             {
-                // Get the index of the found exception
                 size_t fromIndex = std::distance(generated_nft.get_traits().begin(), foundTrait);
 
-                // Determine the correct target position (for example, move to index 2)
-                size_t toIndex = 2;  // Set this dynamically based on logic
+                size_t toIndex = 2;
 
-                // Call the function to move the element in `_exceptions.traitsExceptions`
                 moveElement(generated_nft.get_traits(), fromIndex, toIndex);
             }
         }
@@ -985,10 +859,8 @@ void generator::process_nfts(int start_index, int end_index, std::vector<NFT_Met
         }
 
         const std::string generated_nft_number = std::to_string(nft_index + 1);
-        // Save the generated NFT
         cv::imwrite(_generated_nfts_directory + "/" + generated_nft_number + ".png", res, {cv::ImwriteFlags::IMWRITE_PNG_COMPRESSION, 1});
         generated_nft.name += " #" + generated_nft_number;
-        // Save the NFT metadata
         std::ofstream output_file(_generated_nfts_directory + "/" + generated_nft_number + ".json", std::ios::trunc);
         if (output_file.is_open())
         {
@@ -996,7 +868,7 @@ void generator::process_nfts(int start_index, int end_index, std::vector<NFT_Met
             output_file.close();
             progress_counter += 1;
             if (progress_counter % 10 == 0)
-            {  // Print every 10 NFTs
+            {
                 std::lock_guard<std::mutex> lock(console_mutex);
                 std::cout << "Progress: " << progress_counter << " NFTs processed" << std::endl;
             }
