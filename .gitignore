@@ -5,3 +5,8 @@ build
 out
 .vs
 assets
+/assets2
+/charts
+/traits.csv
+/traits_with_charts.xlsx
+/~$traits_with_charts.xlsx

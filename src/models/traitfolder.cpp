@@ -41,43 +41,40 @@ void TraitDirectory::set_traits(std::vector<std::pair<std::string /*path*/, std:
         //-"Card suit eyes" (spades, hearts, diamonds, spades) should be genereted less
 
         if (trait.get_filename().find("Rainbow Mouth") != std::string::npos)
-            trait.set_generation_chance(0.002);
+            trait.set_generation_chance(0.009);
 
         else if (trait.get_filename().find("Portal Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.008);
 
         else if (trait.get_filename().find("77 Eyes") != std::string::npos)
-            trait.set_generation_chance(0.0008);
+            trait.set_generation_chance(0.005);
 
         else if (trait.get_filename().find("Chip Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.008);
 
         else if (trait.get_filename().find("Flame Horns") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.01);
 
         else if (trait.get_filename().find("Spade Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.008);
 
         else if (trait.get_filename().find("Hearts Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.007);
 
         else if (trait.get_filename().find("Heart Eyes V1") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.007);
 
         else if (trait.get_filename().find("Heart Eyes V2") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.007);
 
         else if (trait.get_filename().find("Diamond Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.007);
 
         else if (trait.get_filename().find("Spade Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.008);
 
         else if (trait.get_filename().find("Exhale Mouth") != std::string::npos)
-            trait.set_generation_chance(0.002);
-
-        else if (trait.get_filename().find("Spade Eyes") != std::string::npos)
-            trait.set_generation_chance(0.001);
+            trait.set_generation_chance(0.005);
 
         _traits.push_back(trait);
     }

@@ -66,7 +66,7 @@ public:
     void from_json(const json &j);
 
 public:
-    const std::vector<Trait> &get_traits() const;
+    std::vector<Trait> &get_traits();
     void sort_traits();
     void add_trait(Trait &trait);
     size_t generate_traits_hash() const;

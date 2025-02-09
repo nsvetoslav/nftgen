@@ -10,7 +10,7 @@ namespace typedexceptions
 class NotGenerateDirectoryWithDirectoryExceptionProcessor : public BaseTraitDirectoryExceptionProcessor
 {
 public:
-    NotGenerateDirectoryWithDirectoryExceptionProcessor(const NFT_Metadata &nftMetadata,
+    NotGenerateDirectoryWithDirectoryExceptionProcessor(NFT_Metadata &nftMetadata,
                                                         const Trait &generated_trait,
                                                         const TraitDirectoryException &trait_directory_exception) noexcept
         :

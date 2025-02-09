@@ -11,6 +11,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(PYTHON_SCRIPT ${CMAKE_SOURCE_DIR}/src/plots.py)
 
 if(MSVC OR WIN32)
     set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv4")  
@@ -19,6 +20,7 @@ endif()
 find_package(OpenCV REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED COMPONENTS functional) 
+
 
 if(MSVC OR WIN32)
     add_compile_options(/ZI)  
@@ -43,7 +45,14 @@ else()
     message(WARNING "clang-format not found. Formatting will not be applied.")
 endif()
 
-add_executable(nftgen "main.cpp" ${SOURCE_FILES} "src/workflow/settings.cpp" "src/workflow/stringutilities.cpp")
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/plots.py
+    COMMAND ${CMAKE_COMMAND} -E copy ${PYTHON_SCRIPT} ${CMAKE_BINARY_DIR}/plots.py
+    DEPENDS ${PYTHON_SCRIPT}
+    COMMENT "Copying script.py to output directory"
+)
 
+add_custom_target(copy_python_script ALL DEPENDS ${CMAKE_BINARY_DIR}/plots.py)
+add_executable(nftgen "main.cpp" ${SOURCE_FILES})
 target_link_libraries(nftgen ${OpenCV_LIBS})
 target_link_libraries(nftgen ${Boost_LIBRARIES})

@@ -13,9 +13,10 @@ namespace typedexceptions
 class TraitExceptionsFactory
 {
 public:
-    static std::unique_ptr<IExceptionProcessor> Get(const NFT_Metadata &nftMetadata,
+    static std::unique_ptr<IExceptionProcessor> Get(NFT_Metadata &nftMetadata,
                                                     const TraitException &trait_exception,
-                                                    const Trait &generated_trait)
+                                                    const Trait &generated_trait,
+                                                    Exceptions& allExceptions)
     {
         switch (trait_exception.exceptionType)
         {
@@ -29,7 +30,8 @@ public:
                 return std::make_unique<GenerateTraitOnlyWithTraitsExceptionProcessor>(
                     GenerateTraitOnlyWithTraitsExceptionProcessor(nftMetadata,
                                                                   generated_trait,
-                                                                  trait_exception));
+                                                                  trait_exception,
+                                                                  allExceptions));
 
             default:
                 return nullptr;
@@ -40,7 +42,7 @@ public:
 class TraitDirectoriesExceptionsFactory
 {
 public:
-    static std::unique_ptr<IExceptionProcessor> Get(const NFT_Metadata &nftMetadata,
+    static std::unique_ptr<IExceptionProcessor> Get(NFT_Metadata &nftMetadata,
                                                     const TraitDirectoryException &trait_directory_exception,
                                                     const Trait &generated_trait)
     {

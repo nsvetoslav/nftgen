@@ -13,9 +13,10 @@ enum class ExceptionsTypes
     HigherGenerationChance = 2,
     LowerGenerationChance = 3,
     GenerateLast = 4,
-    RenderTraitBetweenDirectories = 5,
+    RenderAfter = 5,
     GenerateTraitOnlyWithTraits = 6,
     NotGenerateDirectoryWithDirectory = 7,
+    NotGenerateTraitsWithTraits = 8
 };
 
 class TraitDirectoryException
@@ -42,7 +43,8 @@ public:
                    std::string apply_to_trait,
                    std::string apply_to_directory,
                    ExceptionsTypes exceptionType,
-                   std::optional<std::vector<std::string>> apply_with_traits)
+                   std::optional<std::vector<std::string>> apply_with_traits,
+                   bool bSkipReverseCheck = false )
     {
         this->apply_from_trait = apply_from_trait;
         this->apply_from_trait_dir = apply_from_trait_dir;
@@ -51,6 +53,29 @@ public:
         this->exceptionType = exceptionType;
         this->apply_to_directory = apply_to_directory;
         this->apply_with_traits = apply_with_traits;
+        this->bSkipReverseCheck = bSkipReverseCheck;
+    }
+
+    TraitException(std::string apply_from_trait,
+                   std::string apply_from_trait_dir,
+                   std::string render_after,
+                   ExceptionsTypes exceptionType)
+    {
+        this->apply_from_trait = apply_from_trait;
+        this->apply_from_trait_dir = apply_from_trait_dir;
+        this->exceptionType = exceptionType;
+        this->render_after = render_after;
+    }
+
+    bool Compare(const TraitException &t2)
+    {
+        return apply_from_trait == t2.apply_from_trait &&
+               apply_from_trait_dir == t2.apply_from_trait_dir &&
+               apply_to_trait == t2.apply_to_trait &&
+               apply_to_directory == t2.apply_to_directory &&
+               exceptionType == t2.exceptionType &&
+               render_after == t2.render_after &&
+               apply_with_traits == t2.apply_with_traits;
     }
 
 public:
@@ -61,6 +86,8 @@ public:
     std::string apply_to_directory;
     std::optional<std::vector<std::string>> apply_with_traits;
     ExceptionsTypes exceptionType;
+    std::string render_after;
+    bool bSkipReverseCheck = false;
 };
 
 class Exceptions

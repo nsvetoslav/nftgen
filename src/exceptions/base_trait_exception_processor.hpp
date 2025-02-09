@@ -17,7 +17,7 @@ namespace typedexceptions
 class BaseTraitExceptionProcessor : public IExceptionProcessor
 {
 public:
-    BaseTraitExceptionProcessor(const NFT_Metadata &nftMetadata, const Trait &generated_trait, const TraitException &trait_exception) noexcept
+    BaseTraitExceptionProcessor(NFT_Metadata &nftMetadata, const Trait &generated_trait, const TraitException &trait_exception) noexcept
         :
         _generated_trait(generated_trait), _trait_exception(trait_exception), _nftMetadata(nftMetadata)
     {
@@ -42,9 +42,9 @@ public:
     }
 
 private:
-    [[nodiscard]] virtual inline bool MeetsGenerationConditions(const NFT_Metadata &nftMetadata, const Trait &_trait, const TraitException context)
+    [[nodiscard]] virtual inline bool MeetsGenerationConditions(NFT_Metadata &nftMetadata, const Trait &_trait, const TraitException context)
     {
-        for (const Trait &metadata_trait : nftMetadata.get_traits())
+        for (Trait &metadata_trait : nftMetadata.get_traits())
         {
             if (!CheckMetadataTrait(metadata_trait))
                 return false;
@@ -83,7 +83,7 @@ protected:
     }
 
 private:
-    const NFT_Metadata &_nftMetadata;
+    NFT_Metadata &_nftMetadata;
     const Trait &_generated_trait;
     const TraitException _trait_exception;
 
@@ -94,7 +94,7 @@ private:
 class BaseTraitDirectoryExceptionProcessor : public IExceptionProcessor
 {
 public:
-    BaseTraitDirectoryExceptionProcessor(const NFT_Metadata &nftMetadata,
+    BaseTraitDirectoryExceptionProcessor(NFT_Metadata &nftMetadata,
                                          const Trait &generated_trait,
                                          const TraitDirectoryException &trait_directory_exception) noexcept
         :
@@ -121,11 +121,11 @@ public:
     }
 
 private:
-    [[nodiscard]] virtual inline bool MeetsGenerationConditions(const NFT_Metadata &nftMetadata,
+    [[nodiscard]] virtual inline bool MeetsGenerationConditions(NFT_Metadata &nftMetadata,
                                                                 const Trait &_trait,
                                                                 const TraitDirectoryException context)
     {
-        for (const Trait &metadata_trait : nftMetadata.get_traits())
+        for (Trait &metadata_trait : nftMetadata.get_traits())
         {
             if (!CheckMetadataTrait(metadata_trait))
                 return false;
@@ -164,7 +164,7 @@ protected:
     }
 
 private:
-    const NFT_Metadata &_nftMetadata;
+    NFT_Metadata &_nftMetadata;
     const Trait &_generated_trait;
     const TraitDirectoryException _trait_directory_exception;
 

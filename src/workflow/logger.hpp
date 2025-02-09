@@ -5,8 +5,8 @@ namespace nftgen
 class logger
 {
 public:
-    logger();
-    virtual ~logger();
+    logger(){};
+    virtual ~logger(){};
 
 public:
 

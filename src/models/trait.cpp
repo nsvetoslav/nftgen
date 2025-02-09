@@ -50,7 +50,7 @@ std::pair<Trait*, GenerationResult> Trait::get_next_trait(int trait_directory_id
     float rand_value_trait_folder = uniform_dis_trait_directory(mt_gen_trait_directory);
     if (rand_value_trait_folder > trait_directory.get_generation_chance() && !doNotApplyGenerationChances)
     {
-        std::cout << "Skipping directory ID: " << trait_directory_id << std::endl;
+        //std::cout << "Skipping directory ID: " << trait_directory_id << std::endl;
         return std::make_pair(nullptr, SkippedFolder);
     }
     // end check if gen chance for folder

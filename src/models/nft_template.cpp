@@ -152,7 +152,7 @@ NFT_Metadata::NFT_Metadata(const NFT_Metadata &other)
 {
 }
 
-const std::vector<Trait> &NFT_Metadata::get_traits() const
+std::vector<Trait> &NFT_Metadata::get_traits() 
 {
     return _traits;
 }
