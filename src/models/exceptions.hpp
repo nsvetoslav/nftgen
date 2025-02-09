@@ -8,15 +8,12 @@ namespace nftgen
 enum class ExceptionsTypes
 {
     Undefined = -1,
-    NotGenerateTraitWithDirectory = 0,
-    GenerateOnlyWith = 1,
-    HigherGenerationChance = 2,
-    LowerGenerationChance = 3,
-    GenerateLast = 4,
+    NotGenerateTraitWithDirectory = 1,
+    GenerateTraitOnlyWithTraits = 2,
+    NotGenerateDirectoryWithDirectory = 3,
+    NotGenerateTraitsWithTraits = 4,
     RenderAfter = 5,
-    GenerateTraitOnlyWithTraits = 6,
-    NotGenerateDirectoryWithDirectory = 7,
-    NotGenerateTraitsWithTraits = 8
+    RenderLast = 6
 };
 
 class TraitDirectoryException

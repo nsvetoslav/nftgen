@@ -360,6 +360,14 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             ApplyFromTrait("Hood"),
             ApplyFromTraitDirectory("Legacy"),
             NoTraitApply,  // --
+            ApplyToDirectory("Clothes"),
+            ExceptionsTypes::NotGenerateTraitWithDirectory,
+            std::nullopt));
+
+        _exceptions.traitsExceptions.push_back(TraitException(
+            ApplyFromTrait("Hood"),
+            ApplyFromTraitDirectory("Legacy"),
+            NoTraitApply,  // --
             ApplyToDirectory("Top Acc"),
             ExceptionsTypes::NotGenerateTraitWithDirectory,
             std::nullopt));
@@ -370,6 +378,18 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             ApplyFromTraitDirectory("Legacy"),
             RenderAfter("Eyes"),
             ExceptionsTypes::RenderAfter));
+
+        _exceptions.traitsExceptions.push_back(TraitException(
+            ApplyFromTrait("Money Mouth"),
+            ApplyFromTraitDirectory("Mouth"),
+            "",
+            ExceptionsTypes::RenderLast));
+
+        _exceptions.traitsExceptions.push_back(TraitException(
+            ApplyFromTrait("Rainbow Mouth"),
+            ApplyFromTraitDirectory("Mouth"),
+            "",
+            ExceptionsTypes::RenderLast));
 
         // - If any variation of the "Cap" Trait is generated no "Earings" or "Clothes" with back pieces can be generated.
         _exceptions.traitsExceptions.push_back(TraitException(ApplyFromTrait("Cap"),
@@ -562,6 +582,39 @@ nftgen::generator::generator(std::string trait_directories_root_path) :
             ExceptionsTypes::GenerateTraitOnlyWithTraits,
             std::vector<std::string>{
                 "Galaxy"}));
+
+        _exceptions.traitsExceptions.push_back(TraitException(
+            ApplyFromTrait("Olive Hood"),
+            ApplyFromDirectory("Legacy"),
+            NoTraitApply,  // --
+            ApplyToDirectory("Base"),
+            ExceptionsTypes::GenerateTraitOnlyWithTraits,
+            std::vector<std::string>{
+                "Orange Base"},
+            true));
+
+        _exceptions.traitsExceptions.push_back(TraitException(
+            ApplyFromTrait("Green Hood"),
+            ApplyFromDirectory("Legacy"),
+            NoTraitApply,  // --
+            ApplyToDirectory("Base"),
+            ExceptionsTypes::GenerateTraitOnlyWithTraits,
+            std::vector<std::string>{
+                "Blue Base",
+                "Cyan Base"},
+            true));
+
+        _exceptions.traitsExceptions.push_back(TraitException(
+            ApplyFromTrait("Black Hood"),
+            ApplyFromDirectory("Legacy"),
+            NoTraitApply,  // --
+            ApplyToDirectory("Base"),
+            ExceptionsTypes::GenerateTraitOnlyWithTraits,
+            std::vector<std::string>{
+                "Brown Base",
+                "White Base",
+                "Cow Base"},
+            true));
 
         // - Any type of "Wood Horns" should not be generated with "Brown Skin"
         // - "Rainbow Mouth" should not be genereted with "Old Time Slot Machine"
@@ -834,6 +887,21 @@ void generator::process_nfts(int start_index, int end_index, std::vector<NFT_Met
 
                 moveElement(generated_nft.get_traits(), fromIndex, toIndex);
             }
+        }
+
+        matchingExceptions.clear();
+        std::copy_if(_exceptions.traitsExceptions.begin(), _exceptions.traitsExceptions.end(), std::back_inserter(matchingExceptions), [](const TraitException &exception) {
+            return exception.exceptionType == ExceptionsTypes::RenderLast;
+        });
+
+        for (auto &it : matchingExceptions)
+        {
+            const auto foundTrait = std::find_if(generated_nft.get_traits().begin(), generated_nft.get_traits().end(), [&it](Trait &trait) {
+                return trait.get_filename() == it.apply_from_trait;
+            });
+
+            if (foundTrait != generated_nft.get_traits().end())
+                std::iter_swap(foundTrait, generated_nft.get_traits().end() - 1);
         }
 
         const auto &traits = generated_nft.get_traits();
