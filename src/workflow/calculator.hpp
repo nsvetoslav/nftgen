@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../models/trait.hpp"
+#include "../models/trait.h"
 
 namespace nftgen
 {

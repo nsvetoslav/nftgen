@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base_trait_exception_processor.hpp"
+#include "BaseExceptionProcessors.hpp"
 
 namespace nftgen
 {
@@ -27,17 +27,17 @@ protected:
     {
         const auto &traitDirectoryException = GetTraitDirectoryException();
         const auto &currentGeneratedTrait = GetCurrentGeneratedTrait();
-        const auto &generatedTraitDirectory = currentGeneratedTrait.SetDirectoryName();
+        const auto &generatedTraitDirectory = currentGeneratedTrait.GetDirectoryName();
 
         if (generatedTraitDirectory.find(traitDirectoryException.targetDirectory) != std::string::npos &&
-            metadataTrait.SetDirectoryName().find(traitDirectoryException.sourceDirectory) != std::string::npos)
+            metadataTrait.GetDirectoryName().find(traitDirectoryException.sourceDirectory) != std::string::npos)
         {
             SetContinueToNextDirectory(true);
             return false;
         }
 
         if (generatedTraitDirectory.find(traitDirectoryException.sourceDirectory) != std::string::npos &&
-            metadataTrait.SetDirectoryName().find(traitDirectoryException.targetDirectory) != std::string::npos)
+            metadataTrait.GetDirectoryName().find(traitDirectoryException.targetDirectory) != std::string::npos)
         {
             SetContinueToNextDirectory(true);
             return false;

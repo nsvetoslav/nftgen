@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include "../models/exceptions.hpp"
-#include "exception.hpp"
-#include "trait_exception_processors.hpp"
-#include "traitdirs_exception_processors.hpp"
+#include "../models/IExceptionProcessor.hpp"
+#include "IExceptionProcessor.hpp"
+#include "TraitExceptionsProcessors.hpp"
+#include "DirectoriesExceptionsProcessor.hpp"
 
 namespace nftgen
 {

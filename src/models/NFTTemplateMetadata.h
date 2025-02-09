@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include "trait.hpp"
+#include "trait.h"
 
 namespace nftgen
 {

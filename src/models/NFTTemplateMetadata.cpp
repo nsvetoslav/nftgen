@@ -1,4 +1,4 @@
-#include "nft_template.hpp"
+#include "NFTTemplateMetadata.h"
 
 namespace nftgen
 {
@@ -137,22 +137,22 @@ void NFT_Metadata::from_json(const json &j)
     }
 }
 
-NFT_Metadata::NFT_Metadata(const NFT_Metadata &other)
-    : name(other.name),
-      symbol(other.symbol),
-      description(other.description),
-      seller_fee_basis_points(other.seller_fee_basis_points),
-      image(other.image),
-      external_url(other.external_url),
-      attributes(other.attributes),
-      collection(other.collection),
-      category(other.category),
-      _traits(other._traits),
-      creators(other.creators)
+NFT_Metadata::NFT_Metadata(const NFT_Metadata &other) :
+    name(other.name),
+    symbol(other.symbol),
+    description(other.description),
+    seller_fee_basis_points(other.seller_fee_basis_points),
+    image(other.image),
+    external_url(other.external_url),
+    attributes(other.attributes),
+    collection(other.collection),
+    category(other.category),
+    _traits(other._traits),
+    creators(other.creators)
 {
 }
 
-std::vector<Trait> &NFT_Metadata::get_traits() 
+std::vector<Trait> &NFT_Metadata::get_traits()
 {
     return _traits;
 }
@@ -181,7 +181,7 @@ size_t NFT_Metadata::generate_traits_hash() const
 void NFT_Metadata::add_attribute_by_trait(const Trait &trait)
 {
     Attribute attribute;
-    attribute.trait_type = trait.SetDirectoryName();
+    attribute.trait_type = trait.GetDirectoryName();
     attribute.value = trait.GetFilename();
 
     attributes.push_back(attribute);

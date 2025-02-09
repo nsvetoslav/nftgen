@@ -57,8 +57,8 @@ public:
     [[nodiscard]] std::string_view GetFilename() const;
     void SetFilename(const std::string &filename);
 
-    [[nodiscard]] std::string_view SetDirectoryName() const;
-    void GetDirectoryName(const std::string &directory_name);
+    [[nodiscard]] std::string_view GetDirectoryName() const;
+    void SetDirectoryName(const std::string &directory_name);
 
     [[nodiscard]] static std::pair<Trait *, GenerationResult> GetNextTrait(int directoryID, bool doNotApplyGenerationChances = false);
 

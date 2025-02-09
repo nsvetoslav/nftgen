@@ -10,10 +10,10 @@
 #endif
 
 #include <unordered_set>
-#include "../models/nft_template.hpp"
-#include "../models/traitfolder.hpp"
+#include "../models/traitfolder.h"
 #include "calculator.hpp"
 #include "filemanager.hpp"
+#include "../models/NFTTemplateMetadata.h"
 
 namespace nftgen
 {

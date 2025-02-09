@@ -1,5 +1,5 @@
 #pragma once
-#include "../models/exceptions.hpp"
+#include "../models/IExceptionProcessor.hpp"
 
 namespace nftgen
 {

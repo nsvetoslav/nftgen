@@ -1,4 +1,4 @@
-#include "trait.hpp"
+#include "trait.h"
 #include <chrono>
 #include <numeric>
 #include <optional>
@@ -119,7 +119,7 @@ void Trait::SetFilename(const std::string &filename)
     _filename = filename;
 }
 
-void Trait::GetDirectoryName(const std::string &directory_name)
+void Trait::SetDirectoryName(const std::string &directory_name)
 {
     _directory_name = directory_name;
 }
@@ -134,7 +134,7 @@ void Trait::GetDirectoryName(const std::string &directory_name)
     return _filename;
 }
 
-[[nodiscard]] std::string_view Trait::SetDirectoryName() const
+[[nodiscard]] std::string_view Trait::GetDirectoryName() const
 {
     return _directory_name;
 }

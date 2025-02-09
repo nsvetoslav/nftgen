@@ -6,7 +6,6 @@
 #include "generator.hpp"
 #include "settings.hpp"
 #include "../exceptions/factories.hpp"
-#include "../exceptions/exception.hpp"
 #include <memory>
 #include <random>
 
@@ -174,7 +173,7 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
             if (traitException.exceptionType != ExceptionsTypes::GenerateTraitOnlyWithTraits)
                 continue;
 
-            if (metadataTrait.SetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
+            if (metadataTrait.GetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
                 continue;
 
             if (metadataTrait.GetFilename().find(traitException.sourceTrait) == std::string::npos)
@@ -194,7 +193,7 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
                 if (traitException.targetDirectory != traitExceptionInternal.targetDirectory)
                     continue;
 
-                if (currentGeneratedTrait.SetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
+                if (currentGeneratedTrait.GetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
                     continue;
 
                 if (currentGeneratedTrait.GetFilename().find(traitException.sourceTrait) != std::string::npos)
@@ -219,7 +218,7 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
             if (traitException.exceptionType != ExceptionsTypes::GenerateTraitOnlyWithTraits)
                 continue;
 
-            if (metadataTrait.SetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
+            if (metadataTrait.GetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
                 continue;
 
             if (metadataTrait.GetFilename().find(traitException.sourceTrait) == std::string::npos)
@@ -236,10 +235,10 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
                 if (traitExceptionInternal.targetDirectory.find(traitException.targetDirectory) == std::string::npos)
                     continue;
 
-                if (currentGeneratedTrait.SetDirectoryName().find(traitExceptionInternal.sourceDirectory) == std::string::npos)
+                if (currentGeneratedTrait.GetDirectoryName().find(traitExceptionInternal.sourceDirectory) == std::string::npos)
                     continue;
 
-                if (currentGeneratedTrait.SetDirectoryName().find(traitExceptionInternal.sourceDirectory) == std::string::npos)
+                if (currentGeneratedTrait.GetDirectoryName().find(traitExceptionInternal.sourceDirectory) == std::string::npos)
                     continue;
 
                 if (currentGeneratedTrait.GetFilename().find(traitExceptionInternal.sourceTrait) == std::string::npos)
@@ -249,7 +248,7 @@ void nftgen::generator::CheckCrossedExceptions(Trait &currentGeneratedTrait, NFT
                     std::find_if(nftMetadata.get_traits().begin(),
                                  nftMetadata.get_traits().end(),
                                  [&](Trait &trait) {
-                                     if (trait.SetDirectoryName().find(traitExceptionInternal.sourceDirectory) != std::string::npos)
+                                     if (trait.GetDirectoryName().find(traitExceptionInternal.sourceDirectory) != std::string::npos)
                                      {
                                          for (const auto &exceptionedTraitInternal : traitExceptionInternal.targetTraits.value())
                                          {
@@ -288,9 +287,9 @@ void nftgen::generator::CheckTraitExceotions(NFT_Metadata &nftMetadata, Trait &c
         for (auto &exception : _exceptions.traitsExceptions)
         {
             if (exception.sourceTrait == metadataTrait.GetFilename() ||
-                (metadataTrait.SetDirectoryName().find(exception.sourceDirectory) != std::string::npos &&
+                (metadataTrait.GetDirectoryName().find(exception.sourceDirectory) != std::string::npos &&
                  metadataTrait.GetFilename().find(exception.sourceTrait) != std::string::npos) ||
-                metadataTrait.SetDirectoryName().find(exception.targetDirectory) != std::string::npos)
+                metadataTrait.GetDirectoryName().find(exception.targetDirectory) != std::string::npos)
             {
                 std::unique_ptr<nftgen::typedexceptions::IExceptionProcessor> exception_processor =
                     nftgen::typedexceptions::TraitExceptionsFactory::Get(nftMetadata, exception, currentTrait, _exceptions);

@@ -1,4 +1,4 @@
-#include "traitfolder.hpp"
+#include "traitfolder.h"
 #include "../workflow/calculator.hpp"
 #include "../workflow/stringutilities.hpp"
 
@@ -28,7 +28,7 @@ void TraitDirectory::SetTraits(std::vector<std::pair<std::string /*path*/, std::
         Trait trait;
         trait.SetPath(traitPath.first);
         trait.SetFilename(nftgen::utilities::stringutilities::ClearPostfix(traitPath.second));
-        trait.GetDirectoryName(nftgen::utilities::stringutilities::ClearPrefix(directoryName));
+        trait.SetDirectoryName(nftgen::utilities::stringutilities::ClearPrefix(directoryName));
         trait.SetDirectoryGenerationOrderID(directoryGenerationID);
         trait.SetTraitID(traitID);
         trait.SetDirectoryID(directoryID);

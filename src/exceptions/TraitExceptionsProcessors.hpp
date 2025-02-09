@@ -1,6 +1,7 @@
 #pragma once
 
-#include "base_trait_exception_processor.hpp"
+#include "BaseExceptionProcessors.hpp"
+#include <unordered_set>
 
 namespace nftgen
 {
@@ -27,19 +28,19 @@ protected:
         const auto &traitException = GetTraitException();
         const auto &currentGeneratedTrait = GetCurrentGeneratedTrait();
 
-        const auto &generatedTraitDirectory = currentGeneratedTrait.SetDirectoryName();
+        const auto &generatedTraitDirectory = currentGeneratedTrait.GetDirectoryName();
 
         if (generatedTraitDirectory.find(traitException.targetDirectory) != std::string::npos &&
-            metadataTrait.SetDirectoryName().find(traitException.sourceDirectory) != std::string::npos &&
+            metadataTrait.GetDirectoryName().find(traitException.sourceDirectory) != std::string::npos &&
             metadataTrait.GetFilename().find(traitException.sourceTrait) != std::string::npos)
         {
             SetContinueToNextDirectory(true);
             return false;
         }
 
-        if (metadataTrait.SetDirectoryName().find(traitException.targetDirectory) != std::string::npos)
+        if (metadataTrait.GetDirectoryName().find(traitException.targetDirectory) != std::string::npos)
         {
-            if (currentGeneratedTrait.SetDirectoryName().find(traitException.sourceDirectory) != std::string::npos)
+            if (currentGeneratedTrait.GetDirectoryName().find(traitException.sourceDirectory) != std::string::npos)
             {
                 if (currentGeneratedTrait.GetFilename().find(traitException.sourceTrait) != std::string::npos)
                 {
@@ -75,24 +76,24 @@ private:
     {
         const auto &traitException = GetTraitException();
         const auto &currentGeneratedTrait = GetCurrentGeneratedTrait();
-        const auto &generatedTraitDirectory = currentGeneratedTrait.SetDirectoryName();
+        const auto &generatedTraitDirectory = currentGeneratedTrait.GetDirectoryName();
 
-        const bool &&isMetadataTraitDirectorySameAsApplyFromTraitDir =
-            metadataTrait.SetDirectoryName().find(traitException.sourceDirectory) != std::string::npos;
+        const bool &&isSourceDirectorySameAsMetadata =
+            metadataTrait.GetDirectoryName().find(traitException.sourceDirectory) != std::string::npos;
 
-        if (!isMetadataTraitDirectorySameAsApplyFromTraitDir)
+        if (!isSourceDirectorySameAsMetadata)
             return true;
 
         if (metadataTrait.GetFilename().find(traitException.sourceTrait) == std::string::npos)
             return true;
 
-        if (currentGeneratedTrait.SetDirectoryName().find(traitException.targetDirectory) == std::string::npos)
+        if (currentGeneratedTrait.GetDirectoryName().find(traitException.targetDirectory) == std::string::npos)
             return true;
 
         const auto it = std::find_if(traitException.targetTraits->begin(),
                                      traitException.targetTraits->end(),
-                                     [&currentGeneratedTrait](const std::string exceptedTraitName) {
-                                         if (currentGeneratedTrait.GetFilename().find(exceptedTraitName) != std::string::npos)
+                                     [&currentGeneratedTrait](const std::string exceptionTargetTrait) {
+                                         if (currentGeneratedTrait.GetFilename().find(exceptionTargetTrait) != std::string::npos)
                                          {
                                              return true;
                                          }
@@ -131,10 +132,10 @@ private:
     {
         const auto &traitException = GetTraitException();
         const auto &currentGeneratedTrait = GetCurrentGeneratedTrait();
-        const auto &generatedTraitDirectory = currentGeneratedTrait.SetDirectoryName();
+        const auto &generatedTraitDirectory = currentGeneratedTrait.GetDirectoryName();
 
         const bool &&isMetadataTraitDirectorySameAsApplyFromTraitDir =
-            metadataTrait.SetDirectoryName().find(traitException.targetDirectory) != std::string::npos;
+            metadataTrait.GetDirectoryName().find(traitException.targetDirectory) != std::string::npos;
 
         if (!isMetadataTraitDirectorySameAsApplyFromTraitDir)
             return true;
@@ -164,7 +165,7 @@ private:
             return true;
         }
 
-        if (currentGeneratedTrait.SetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
+        if (currentGeneratedTrait.GetDirectoryName().find(traitException.sourceDirectory) == std::string::npos)
             return true;
 
         if (currentGeneratedTrait.GetFilename().find(traitException.sourceTrait) == std::string::npos)

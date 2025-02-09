@@ -42,7 +42,7 @@ public:
                    std::string targetTrait,
                    std::string targetDirectory,
                    ExceptionsTypes exceptionType,
-                   std::optional<std::vector<std::string>> apply_with_traits,
+                   std::optional<std::vector<std::string>> tagetTraits,
                    bool bSkipReverseCheck = false)
     {
         this->sourceTrait = sourceTrait;
@@ -51,7 +51,7 @@ public:
         this->targetTrait = targetTrait;
         this->exceptionType = exceptionType;
         this->targetDirectory = targetDirectory;
-        this->targetTraits = apply_with_traits;
+        this->targetTraits = tagetTraits;
         this->skipReverseCheck = bSkipReverseCheck;
     }
 

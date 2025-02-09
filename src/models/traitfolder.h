@@ -3,9 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "trait.hpp"
-#include "exceptions.hpp"
-#include "trait.hpp"
+#include "trait.h"
+#include "IExceptionProcessor.hpp"
 
 namespace nftgen
 {

@@ -4,10 +4,10 @@
 #include <vector>
 #include <optional>
 #include <iostream>
-#include "exception.hpp"
-#include "../models/exceptions.hpp"
-#include "../models/trait.hpp"
-#include "../models/nft_template.hpp"
+#include "../models/IExceptionProcessor.hpp"
+#include "../models/trait.h"
+#include "IExceptionProcessor.hpp"
+#include "../models/NFTTemplateMetadata.h"
 
 namespace nftgen
 {
